@@ -21,23 +21,24 @@ TechStack :
 
 ## Démarrage rapide
 
-Pour travailler localement :
+Pour lancer le projet localement :
 
 ```sh
 # Cloner le dépôt
 git clone https://github.com/Squid-Nayth/nathannkombe.tech.git
 
 # Ouvrir `index.html` dans votre navigateur ou lancer un serveur statique
-# Exemple avec Python) :
-python3 -m http.server 8080 (ou un autre port de libre sur votre machine)
 
-# Puis sur votre navigateur tapez : http://localhost:8080
+# Exemple avec Python :
+python3 -m http.server 5500 (ou un autre port de libre sur votre machine)
+
+# Puis sur votre navigateur tapez : http://localhost:5500.
 ```
-Ou utilisez l'extension [LiveServer](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) pour Visual Studio Code
+Ou utilisez l'extension : [LiveServer](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) pour Visual Studio Code.
 
 ## Inspirations
 
-- [Portfolios de développeur](https://www.webportfolios.dev/)
+- [Portfolios de développeur](https://www.webportfolios.dev/).
 - [Apple Design](https://developer.apple.com/design/resources/).
 
 ## Mentions légales

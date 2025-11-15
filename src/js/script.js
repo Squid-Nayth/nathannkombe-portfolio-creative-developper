@@ -255,6 +255,35 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+// Defensive: block accidental taps on full-screen anchors that steal touch events.
+// Symptom: on some devices a transparent/positioned anchor (e.g. href="#contact")
+// can unintentionally cover most of the viewport and receive taps — this
+// handler prevents those clicks when they originate from non-interactive
+// elements (not buttons/inputs/links) and the anchor covers a large area.
+document.addEventListener('click', function (e) {
+  try {
+    // Only consider anchors with hashes
+    const anchor = e.target.closest && e.target.closest('a[href^="#"]');
+    if (!anchor) return;
+
+    // If the user actually clicked an interactive element, allow it
+    if (e.target.closest && e.target.closest('button,a,input,textarea,select,label')) return;
+
+    // Measure how much of the viewport the anchor covers. If it's a large
+    // fraction, it's likely an overlay that should not steal taps.
+    const rect = anchor.getBoundingClientRect();
+    const area = Math.max(0, rect.width) * Math.max(0, rect.height);
+    const vpArea = Math.max(1, window.innerWidth * window.innerHeight);
+    if (area / vpArea > 0.25) {
+      e.preventDefault();
+      e.stopPropagation();
+      console.info('Blocked accidental large-anchor click for', anchor.getAttribute('href'));
+    }
+  } catch (err) {
+    /* ignore defensive handler errors */
+  }
+}, true);
+
 // Contact form handling: show a confirmation message on submit (client-side)
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.querySelector('.contact-form');

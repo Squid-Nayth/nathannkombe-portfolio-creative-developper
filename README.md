@@ -21,7 +21,7 @@ TechStack :
 
 ## Démarrage rapide
 
-Pour le lancer localement :
+Pour travailler localement :
 
 ```sh
 # Cloner le dépôt

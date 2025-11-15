@@ -28,7 +28,7 @@ Pour travailler localement :
 git clone https://github.com/Squid-Nayth/nathannkombe.tech.git
 
 # Ouvrir `index.html` dans votre navigateur ou lancer un serveur statique
-# (ex. avec Python) :
+# Exemple avec Python) :
 python3 -m http.server 8080
 
 # Puis visiter http://localhost:8080

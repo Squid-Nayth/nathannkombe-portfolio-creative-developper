@@ -280,9 +280,51 @@
         <h2 id="contrib-heading"><img class="experience-h2-icon" src="public/icons/git-commit-16.svg" alt="GitHub" aria-hidden="true"> Contributions GitHub</h2>
         <p class="contrib-sub">Mon parcours de programmation visualisé</p>
 
-        <div class="github-calendar-card">
-          <div class="calendar">Loading Stuff...</div>
-          <script>GitHubCalendar(".calendar", "Squid-Nayth");</script>
+  <div class="github-calendar-card" style="border-radius:14px; overflow:hidden;">
+           <div class="calendar">
+            <!-- Loading stuff -->
+            Loading the calendar...
+           </div>
+        
+        
+           <script src="API/Github-Activity/github-calendar.js"></script>
+           <!-- GitHub calendar script -->
+           <script>
+            (function(){
+              // Init calendar
+              try {
+                GitHubCalendar(".calendar", "Squid-Nayth", {
+                  responsive: true,
+                  tooltips: true,
+                  global_stats: false // disable contribution stats
+                });
+
+                // Remove the 'Skip to contributions year list' link if the widget injects it.
+                function removeSkipLink(){
+                  try{
+                    var card = document.querySelector('.github-calendar-card');
+                    if(!card) return;
+                    var anchors = card.querySelectorAll('a');
+                    anchors.forEach(function(a){
+                      var t = (a.textContent || '').trim().toLowerCase();
+                      if(t.indexOf('skip to') === 0) a.remove();
+                    });
+                  }catch(e){}
+                }
+
+                // try shortly after init
+                setTimeout(removeSkipLink, 150);
+
+                // watch for async inserts for a short window
+                var target = document.querySelector('.github-calendar-card .calendar') || document.querySelector('.github-calendar-card');
+                if(target && window.MutationObserver){
+                  var obs = new MutationObserver(function(){ removeSkipLink(); });
+                  obs.observe(target, { childList: true, subtree: true });
+                  setTimeout(function(){ try{ obs.disconnect(); }catch(e){} }, 5000);
+                }
+              }catch(e){ /* ignore */ }
+            })();
+          </script>
           
 
           <div class="contrib-legend">Contributions en 2025</div>
@@ -435,8 +477,7 @@
         </div>
       </footer>
     </main>
-    <!-- GitHub calendar script -->
-    <script src="API/Github-Activity/github-calendar.js"></script>
+    
     
     <!-- EmailJS SDK -->
     <script src="https://cdn.emailjs.com/sdk/3.2.0/email.min.js"></script>

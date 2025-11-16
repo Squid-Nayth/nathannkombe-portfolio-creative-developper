@@ -31,7 +31,7 @@
   <meta name="theme-color" content="#000000" />
   <link href="./src/css/style.css" rel="stylesheet">
   <!-- GitHub calendar responsive CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/github-calendar@latest/dist/github-calendar-responsive.css">
+  <link rel="stylesheet" href="API/Github-Activity/github-calendar.css">
   </head>
   <body>
     <!-- Top navigation -->
@@ -281,7 +281,9 @@
         <p class="contrib-sub">Mon parcours de programmation visualisé</p>
 
         <div class="github-calendar-card">
-          <div class="calendar">Loading the data just for you.</div>
+          <div class="calendar">Loading Stuff...</div>
+          <script>GitHubCalendar(".calendar", "Squid-Nayth");</script>
+          
 
           <div class="contrib-legend">Contributions en 2025</div>
 
@@ -434,15 +436,8 @@
       </footer>
     </main>
     <!-- GitHub calendar script -->
-    <script src="https://unpkg.com/github-calendar@latest/dist/github-calendar.min.js"></script>
-    <script>
-      document.addEventListener('DOMContentLoaded', function () {
-        // initialize the calendar for Squid-Nayth
-        if (typeof GitHubCalendar === 'function') {
-          GitHubCalendar('.calendar', 'Squid-Nayth', { responsive: true });
-        }
-      });
-    </script>
+    <script src="API/Github-Activity/github-calendar.js"></script>
+    
     <!-- EmailJS SDK -->
     <script src="https://cdn.emailjs.com/sdk/3.2.0/email.min.js"></script>
     <script>

@@ -1,0 +1,287 @@
+:root {
+        /* "Less" level (no contributions) — use a very dark square to blend with site dark theme */
+        --color-calendar-graph-day-bg: #1a1a1a;
+        --color-calendar-graph-day-L1-bg: #0a4208;
+        --color-calendar-graph-day-L2-bg: #047526;
+        --color-calendar-graph-day-L3-bg: #45a045;
+        --color-calendar-graph-day-L4-bg: #39dd34;
+    }
+  
+  .ContributionCalendar-day[data-level='0'] {
+      background-color: var(--color-calendar-graph-day-bg);
+      border-radius: 3px;
+  }
+  
+  .ContributionCalendar-day[data-level='1'] {
+      background-color: var(--color-calendar-graph-day-L1-bg);
+      border-radius: 3px;
+  }
+  
+  .ContributionCalendar-day[data-level='2'] {
+      background-color: var(--color-calendar-graph-day-L2-bg);
+      border-radius: 3px;
+  }
+  
+  .ContributionCalendar-day[data-level='3'] {
+      background-color: var(--color-calendar-graph-day-L3-bg);
+      border-radius: 3px;
+  }
+  
+  .ContributionCalendar-day[data-level='4'] {
+      background-color: var(--color-calendar-graph-day-L4-bg);
+      border-radius: 3px;
+  }
+  
+  table.ContributionCalendar-grid {
+      margin-bottom: 0pt;
+  }
+  
+  table.ContributionCalendar-grid td {
+      padding: 4pt;
+  }
+  
+  table.ContributionCalendar-grid td span.sr-only {
+      display: none;
+  }
+  
+  td.ContributionCalendar-label span[aria-hidden='true'] {
+      font-size: 8pt;
+      left: -1pt;
+  }
+  
+  tool-tip {
+      display: none;
+  }
+  
+  .calendar .width-full > .float-left {
+      display: none;
+  }
+  
+  .calendar {
+      width: 100%;
+      max-width: 860px;
+      background-color: rgb(15, 15, 15);
+      border: 1px solid rgb(35, 35, 35);
+      color: lightgray;
+      border-radius: 10px;
+      min-height: 120px;
+      text-align: center;
+      margin: 0 auto;
+      padding: 15px;
+      padding-bottom: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 1),
+      0 0 25px rgba(0, 0, 0, 1),
+      0 0 35px rgba(0, 0, 0, 1);
+  }
+
+  @media screen and (max-width: 800px) {
+    .calendar {
+       width: 98%;
+        padding: 10px;
+    }
+}
+
+  
+  * {
+      scrollbar-width: thin;
+      scrollbar-color: #444 rgb(15, 15, 15);
+  }
+  
+  
+  .calendar::-webkit-scrollbar-track {
+      background: rgb(15, 15, 15); 
+  }
+  
+  .calendar::-webkit-scrollbar-thumb {
+      background-color: #444; 
+      border-radius: 4px;
+  }
+  
+  .calendar::-webkit-scrollbar-thumb:hover {
+      background-color: #555; 
+  }
+  
+  @media screen and (max-width: 800px) {
+      .calendar {
+          
+          scrollbar-color: rgb(15, 15, 15); 
+      }
+  }
+  
+  .calendar-graph text.wday,
+  .calendar-graph text.month {
+    width: 100%;
+      font-size: 10px;
+      fill: #aaa;
+  }
+  .calendar-graph text.day {
+  }
+
+  div.px-md-5 {
+      height: 2rem;
+      
+  }
+  
+  div.float-right {
+      text-align: right;
+      padding: 0 14px 10px 0;
+      display: inline-block;
+      justify-content: right;
+      
+  }
+  
+  div.float-right div {
+      display: inline-block;
+      list-style: none;
+      margin: 0 5px;
+      position: relative;
+      bottom: -1px;
+      padding: 0;
+      
+  }
+  
+  div.float-right span.sr-only {
+      display: none;
+      
+  }
+  
+  .contrib-legend .legend li {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      
+  }
+  
+  .text-small {
+      font-size: 12px;
+      color: white;
+      
+  }
+  
+  .calendar-graph {
+      padding: 5px 0;
+      height: auto;
+      text-align: center;
+  }
+  
+  .contrib-number {
+      font-weight: 300;
+      line-height: 1.3em;
+      font-size: 18px;
+      display: block;
+      color: white;
+  }
+  
+  .calendar img.spinner {
+      width: 70px;
+      margin-top: 50px;
+      min-height: 70px;
+  }
+  
+  .monospace {
+      text-align: center;
+      color: white;
+      font-family: monospace;
+  }
+  
+  .monospace a {
+      color: #1D75AB;
+      text-decoration: none;
+  }
+  
+  .contrib-footer {
+      font-size: 11px;
+      padding: 0 10px 12px;
+      text-align: left;
+      width: 100%;
+      box-sizing: border-box;
+      height: 26px;
+  }
+  
+  .left.text-muted {
+      float: left;
+      margin-left: 9px;
+      color: white;
+      
+  }
+  .left.text-muted a {
+      color: #4078c0;
+      text-decoration: none;
+      
+  }
+  .left.text-muted a:hover,
+  .monospace a:hover {
+      text-decoration: underline;
+  }
+  
+  h2.f4.text-normal.mb-3 {
+      display: none;
+  }
+  
+  .float-left.text-gray {
+      float: left;
+      
+  }
+  #user-activity-overview{
+      display:none;
+  }
+  
+  .day-tooltip {
+      white-space: nowrap;
+      position: absolute;
+      z-index: 99999;
+      padding: 8px;
+      font-size: 12px;
+      color: #fff;
+      text-align: center;
+      background: rgba(0,0,0,.85);
+      border-radius: 3px;
+      display: none;
+      pointer-events: none;
+      
+  }
+  .day-tooltip strong {
+      color: #dfe2e5;
+      
+  }
+  .day-tooltip.is-visible {
+      display: block;
+      
+  }
+  .day-tooltip:after {
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      width: 5px;
+      height: 5px;
+      box-sizing: border-box;
+      margin: 0 0 0 -5px;
+      content: " ";
+      border: 5px solid transparent;
+      border-top-color: rgba(0,0,0,.85);
+      
+      
+  }
+  
+  text.ContributionCalendar-label {
+      fill: #767676;
+      font-size: 11px;
+      
+  }
+  
+  caption.sr-only {
+      display: none;
+      
+  }
+  
+td.ContributionCalendar-label {
+    position: relative;
+    right: 3px;
+    left: 5px;
+    text-align: right;
+    padding-right: 10px !important;
+  }
+  
+  table.ContributionCalendar-grid td:not(.ContributionCalendar-label) {
+    padding: 4pt;
+  }

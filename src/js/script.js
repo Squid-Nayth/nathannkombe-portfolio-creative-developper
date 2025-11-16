@@ -244,22 +244,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const on = e.target.checked;
       localStorage.setItem(KEY, on ? '1' : '0');
       toggle.setAttribute('aria-checked', String(on));
-  // brief label feedback
-      const title = document.querySelector('.contact-title');
-      if (title) {
-        title.textContent = on ? 'Vous aimez mon travail ? — notifications activées' : 'Vous aimez mon travail ?';
-        setTimeout(() => { if (title) title.textContent = 'Vous aimez mon travail ?'; }, 1400);
-      }
       if (!__toggleSoundPlayed) try { _playToggleSound(); } catch (err) {}
     });
   }
 });
 
-// Defensive: block accidental taps on full-screen anchors that steal touch events.
-// Symptom: on some devices a transparent/positioned anchor (e.g. href="#contact")
-// can unintentionally cover most of the viewport and receive taps — this
-// handler prevents those clicks when they originate from non-interactive
-// elements (not buttons/inputs/links) and the anchor covers a large area.
+// Defensive handler to block accidental clicks on large anchor overlays
 document.addEventListener('click', function (e) {
   try {
     // Only consider anchors with hashes
@@ -668,7 +658,6 @@ document.addEventListener('DOMContentLoaded', function () {
   } catch (e) { console.warn('error enforcing external links _blank', e); }
 });
 
-/* OneSignal toggle integration: tie #emailToggle to OneSignal SDK */
 (function () {
   const toggle = document.getElementById('emailToggle');
   if (!toggle) return;

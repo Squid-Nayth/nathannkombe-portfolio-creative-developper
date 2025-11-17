@@ -461,11 +461,49 @@ body.overlay-active footer{
 .experience-h2-icon{width:20px;height:20px;display:inline-block;filter:invert(1) brightness(1)}
 .experience-list{display:block}
 .experience-item{display:flex;gap:1rem;align-items:flex-start;padding:1rem 0;border-bottom:1px solid rgba(255,255,255,0.04)}
+
+/* When an experience-item groups multiple entries, stack them vertically
+  so that each entry has its media at left and body at right. */
+.experience-item.grouped{flex-direction:column}
+.experience-item.grouped > .experience-entry{padding:0}
+
+/* Ensure all grouped entries share the same left edge for the body column
+   so dates align precisely. We switch the grouped container to a two-column
+   grid (media / body) and let each sub-entry's children participate in that
+   grid using `display: contents`. This keeps the DOM markup but aligns
+   every `.experience-body` at the same x-position. */
+.experience-item.grouped{
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 10px 1rem;
+  align-items: start;
+}
+.experience-item.grouped .experience-entry{display:contents}
+.experience-item.grouped .experience-entry-sep{grid-column:1 / -1}
+
+/* Fallback: on small screens we revert to stacked flex rows for better
+   touch layout and to preserve the previous responsive rules. */
+@media (max-width:880px){
+  .experience-item.grouped{display:block}
+  .experience-item.grouped .experience-entry{display:flex}
+  .experience-item.grouped .experience-entry .experience-media{flex:0 0 56px}
+  .experience-item.grouped .experience-entry .experience-body{flex:1}
+}
 .experience-item:last-child{border-bottom:none}
 .experience-media{width:56px;flex:0 0 56px}
 .experience-logo{width:56px;height:56px;display:block;object-fit:contain;border-radius:6px;background:rgba(255,255,255,0.02);padding:6px}
 .experience-body{flex:1}
 .experience-row{display:flex;align-items:center;justify-content:space-between;gap:1rem}
+
+/* For grouped experience entries, use a two-column grid so the date column
+   has consistent horizontal positioning across entries. This prevents the
+   right-side date from shifting between stacked entries. */
+.experience-item.grouped .experience-entry .experience-row{
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1rem;
+  align-items: center;
+}
 .experience-info{min-width:0}
 .experience-title{font-weight:700;font-size:1.05rem;color:#fff}
 .experience-company{color:#9ca3af;margin-top:4px}
@@ -494,6 +532,19 @@ body.overlay-active footer{
 .experience-list .experience-item:hover::after,
 .experience-list .experience-item:focus-within::after{opacity:1;transform:scale(1.02)}
 .experience-list .experience-item > *{position:relative;z-index:1}
+
+/* Sub-entry layout when multiple experiences are grouped inside one `.experience-item`.
+   Keep the same visual structure (media left, body right) but stack entries vertically. */
+.experience-item .experience-entry{
+  display:flex;
+  gap:1rem;
+  align-items:flex-start;
+  padding:0.75rem 0;
+}
+.experience-item .experience-entry .experience-media{flex:0 0 56px}
+.experience-item .experience-entry .experience-body{flex:1}
+.experience-item .experience-entry-sep{height:1px;background:transparent;border-top:1px solid rgba(255,255,255,0.03);margin:6px 0 8px 0}
+.experience-item .experience-entry + .experience-entry{margin-top:0.6rem}
 
 @media (max-width:720px){
   .experience-list .experience-item{transition: transform .28s ease}

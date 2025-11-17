@@ -4,7 +4,7 @@
 
 Ce dépôt contient mon portfolio personnel : un site léger, accessible et soigné qui présente mes projets, mon expérience et un moyen simple de me contacter.
 
-![Portrait](/public/images/nathan2.PNG)
+![Portrait](/public/images/OpenGraph.jpg)
 
 ## Vue d'ensemble
 

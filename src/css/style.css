@@ -162,7 +162,6 @@ section{scroll-margin-top:calc(var(--nav-height) + 8px)}
   background: linear-gradient(180deg,#007aff 0%, #0062d6 100%); /* match .download-cv */
   color:#fff;
   border-radius:10px; /* same shape as .github-cta */
-  corner-shape: squircle;
   font-weight:700;
   font-size:1rem;
   text-decoration:none;
@@ -642,6 +641,14 @@ body.overlay-active footer{
 .projects-inner h2{font-size:2.2rem;margin-bottom:1rem;font-weight:800;color:#fff;display:inline-flex;align-items:center;gap:0.75rem}
 .projects-h2-icon{width:20px;height:20px;display:inline-block;filter:invert(1) brightness(1)}
 .projects-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.25rem;margin-top:1rem}
+
+/* Center the last project card when it's on its own row (odd number of items)
+   This keeps the layout balanced when there are 3, 5, ... project cards. */
+.projects-grid > .project-card:last-child:nth-child(odd) {
+  grid-column: 1 / -1; /* span full width */
+  justify-self: center; /* center the card inside the grid area */
+  max-width: 720px; /* avoid the card stretching too wide on large screens */
+}
 .project-card{background:linear-gradient(180deg, #0b0b0b 0%, #070707 100%);border:1px solid rgba(255,255,255,0.04);border-radius:12px;box-shadow:0 12px 30px rgba(2,6,23,0.6);display:flex;gap:1rem;overflow:hidden;align-items:stretch}
 .project-media{flex:0 0 48%;min-width:160px;height:220px;overflow:hidden}
 .project-media img{width:100%;height:100%;object-fit:cover;display:block}
@@ -664,7 +671,6 @@ body.overlay-active footer{
   color: #fff;
   text-decoration:none;
   border-radius:8px;
-  corner-shape: squircle;
   font-weight:700;
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.02), 0 8px 22px rgba(2,6,23,0.6);
   transition: transform .16s ease, filter .12s ease;
@@ -711,7 +717,7 @@ body.overlay-active footer{
 .contact-form textarea{min-height:180px}
 .contact-form input::placeholder, .contact-form textarea::placeholder{color:rgba(230,238,242,0.35);font-family:inherit}
 .contact-form .contact-form-actions{margin-top:1rem}
-.btn-send{background:#10b981;color:#021;border:none;padding:0.8rem 1.25rem;border-radius:10px; corner-shape: squircle; font-weight:700;box-shadow:0 8px 24px rgba(16,185,129,0.12);cursor:pointer;display:inline-flex;align-items:center;gap:0.6rem}
+.btn-send{background:#10b981;color:#021;border:none;padding:0.8rem 1.25rem;border-radius:10px; font-weight:700;box-shadow:0 8px 24px rgba(16,185,129,0.12);cursor:pointer;display:inline-flex;align-items:center;gap:0.6rem}
 .btn-send img{width:18px;height:18px;display:block;filter:invert(1) drop-shadow(0 6px 18px rgba(16,185,129,0.12))}
 .btn-send:hover{
   transform:translateY(-1px);

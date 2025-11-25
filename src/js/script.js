@@ -417,7 +417,20 @@ document.addEventListener('DOMContentLoaded', () => {
   let hoverAllowed = true;
   if (!isTouchDevice) {
     hoverAllowed = false;
-    const enableHover = function () { hoverAllowed = true; try { document.removeEventListener('pointerdown', enableHover); } catch (e) {} };
+    const enableHover = function () {
+      hoverAllowed = true;
+      try { document.removeEventListener('pointerdown', enableHover); } catch (e) {}
+      // If the pointer is already over the faceId element when hover is enabled,
+      // trigger the same behavior as a mouseenter so the animation starts immediately.
+      try {
+        if (faceId && faceId.matches && faceId.matches(':hover')) {
+          // call the same handler as mouseenter (if defined below it will run)
+          // we dispatch a synthetic event to reuse existing logic safely
+          const ev = new Event('mouseenter', { bubbles: false, cancelable: false });
+          faceId.dispatchEvent(ev);
+        }
+      } catch (e) { /* ignore match/dispatch errors */ }
+    };
     document.addEventListener('pointerdown', enableHover, { once: true });
   }
 
@@ -477,7 +490,8 @@ document.addEventListener('DOMContentLoaded', () => {
   } else {
     // Desktop: hover behaviour (enabled after first pointerdown)
     let desktopTimer = null;
-    faceId.addEventListener('mouseenter', function () {
+
+    function _handleFaceIdMouseEnter() {
       if (!hoverAllowed) return;
       faceId.classList.add('active'); try { _unlockAudioOnce(); } catch (e) {}
       desktopTimer = setTimeout(() => {
@@ -494,7 +508,9 @@ document.addEventListener('DOMContentLoaded', () => {
           overlay.addEventListener('transitionend', onFadeEnd);
         }, dashDuration + 80);
       }, completeDelay);
-    });
+    }
+
+    faceId.addEventListener('mouseenter', _handleFaceIdMouseEnter);
     faceId.addEventListener('mouseleave', function () {
       if (desktopTimer) { clearTimeout(desktopTimer); desktopTimer = null; }
       faceId.classList.remove('active');

@@ -4,12 +4,13 @@
   padding: 0;
 }
 :root {
-  /* Fonts: use the local rounded Arial for body text and the extra-bold file for headings */
+  /* Fonts: use the local rounded Arial for body text and the bold family for headings */
   --body-font: 'ArialRoundedMT', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --heading-font: 'ArialRoundedMT', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --heading-font: 'ArialRoundedMT-Bold', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 /* Local @font-face declarations for fonts placed in /public/fonts */
+/* Regular body font */
 @font-face {
   font-family: 'ArialRoundedMT';
   src: url('/public/fonts/ARIALROUNDEDMT.TTF') format('truetype');
@@ -18,16 +19,18 @@
   font-display: swap;
 }
 
+/* Bold variant used for headings and buttons */
 @font-face {
-  font-family: 'ArialRoundedMT';
+  font-family: 'ArialRoundedMT-Bold';
   src: url('/public/fonts/Arial Rounded MT Bold Regular.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 
+/* Extra-bold (fallback) */
 @font-face {
-  font-family: 'ArialRoundedMT';
+  font-family: 'ArialRoundedMT-ExtraBold';
   src: url('/public/fonts/ARIALROUNDEDMTEXTRABOLD.TTF') format('truetype');
   font-weight: 800;
   font-style: normal;
@@ -59,7 +62,7 @@ body {
 /* Headings should use the system / heading font, not the rounded body font */
 h1, h2, h3, h4, h5, h6, .project-title, .hero-heading, .contact-title, .projects-inner h2, .experience-inner h2, .contributions-inner h2 {
   font-family: var(--heading-font);
-  font-weight: 800; /* use the extra-bold font file for headings */
+  font-weight: 700; /* use the Bold file (weight 700) for headings */
 }
 
 .site-nav{
@@ -81,14 +84,12 @@ h1, h2, h3, h4, h5, h6, .project-title, .hero-heading, .contact-title, .projects
 .nav-link img{width:18px;height:18px;display:block;filter:invert(1) brightness(1);opacity:0.95}
 .nav-link:hover{background:rgba(255,255,255,0.02)}
 .nav-cta{margin-left:6px;padding:6px 10px;border-radius:999px;background:transparent;border:1px solid rgba(255,255,255,0.06);color:#fff;font-weight:700;text-decoration:none}
-.nav-bubble{margin-left:8px;padding:6px 12px;border-radius:999px;background:#007aff;color:#fff;text-decoration:none;font-weight:800;box-shadow:0 8px 22px rgba(0,122,255,0.12)}
 
 main{padding-top:64px}
 
 @media (max-width:880px){
   .nav-inner{padding:0 8px}
   .nav-right .nav-cta{display:none}
-  .nav-right .nav-bubble{display:none}
   .nav-right{gap:8px}
 }
 
@@ -1095,7 +1096,7 @@ a:hover, button:hover, .btn:hover, .project-cta:hover, .download-cv:hover, .gith
 
 /* Buttons: use the bold local rounded Arial font for button text */
 button, .btn, .project-cta, .contact-cta, .github-cta, .download-cv, .btn-send, .nav-cta, .mobile-sidebar a {
-  font-family: 'ArialRoundedMT', var(--heading-font);
+  font-family: var(--heading-font);
   font-weight: 700;
 }
 
@@ -1142,7 +1143,6 @@ button, .btn, .project-cta, .contact-cta, .github-cta, .download-cv, .btn-send, 
 @media (max-width:480px){
   html,body{font-size:15px}
   .site-title{font-size:0.92rem}
-  .nav-bubble{display:none}
   .hero{padding:5.5vh 0.6rem}
   .hero-heading{font-size:clamp(1.4rem,8.5vw,2.4rem)}
   .contact-cta{margin:1.6rem auto 0;padding:0.5rem 0.8rem}

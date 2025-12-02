@@ -702,6 +702,16 @@ body.overlay-active footer{
 .project-tags span{background:rgba(255,255,255,0.03);padding:0.25rem 0.5rem;border-radius:6px;font-size:0.85rem;color:#9ca3af}
 .project-tags span.tag-with-icon{display:inline-flex;align-items:center;gap:0.45rem}
 .project-tags span.tag-with-icon img{width:18px;height:18px;display:block;object-fit:contain}
+
+/* Fallback: ensure these small icons align inline with text across browsers
+   - inline-block + vertical-align gives consistent inline placement when
+     the surrounding layout isn't exactly the same across user agents */
+.project-tags .tag-with-icon img,
+.tag-with-icon img {
+  display: inline-block !important;
+  vertical-align: middle !important;
+  flex: 0 0 auto !important;
+}
 .project-links{margin-top:auto;display:flex;gap:0.6rem}
 .project-links .btn{padding:0.55rem 0.9rem}
 

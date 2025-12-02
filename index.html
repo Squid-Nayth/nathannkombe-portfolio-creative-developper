@@ -30,6 +30,8 @@
   <link rel="apple-touch-icon" href="/public/favicon/Icon-iOS-Dark-1024x1024@1x.png">
   <meta name="theme-color" content="#000000" />
   <link href="./src/css/style.css" rel="stylesheet">
+  <!-- Preload primary local font for faster first render -->
+  <link rel="preload" href="/public/fonts/ARIALROUNDEDMT.TTF" as="font" type="font/ttf" crossorigin>
   <!-- GitHub calendar responsive CSS -->
   <link rel="stylesheet" href="API/Github-Activity/github-calendar.css">
   </head>
@@ -280,9 +282,10 @@
             </div>
             <div class="project-body">
               <h3 class="project-title">PS2 Anniversary Tribute</h3>
-              <p class="project-desc">Un projet hommage à la PlayStation 2, recréant l'ambiance visuelle et sonore du menu de la PS2.</p>
+              <p class="project-desc">Un projet hommage à la PS2 pour célébrer ses 25 ans, recréant l’ambiance visuelle et sonore du menu original, l'objectif est de retrouver l’atmosphère calme et futuriste qui a marqué toute une génération.
+</p>
               <div class="project-tags">
-                <span>HTML</span><span>SCSS</span><span>JavaScript</span>
+                <span>HTML</span><span>SASS</span><span>JavaScript</span>
               </div>
               <div class="project-links">
                 <a class="project-cta" href="https://ps2-anniversary-tribute.vercel.app/" target="_blank" rel="noopener noreferrer">

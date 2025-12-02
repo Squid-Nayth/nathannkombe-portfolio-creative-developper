@@ -4,7 +4,34 @@
   padding: 0;
 }
 :root {
-  --site-font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  /* Fonts: use the local rounded Arial for body text and the extra-bold file for headings */
+  --body-font: 'ArialRoundedMT', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --heading-font: 'ArialRoundedMT', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Local @font-face declarations for fonts placed in /public/fonts */
+@font-face {
+  font-family: 'ArialRoundedMT';
+  src: url('/public/fonts/ARIALROUNDEDMT.TTF') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'ArialRoundedMT';
+  src: url('/public/fonts/Arial Rounded MT Bold Regular.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'ArialRoundedMT';
+  src: url('/public/fonts/ARIALROUNDEDMTEXTRABOLD.TTF') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
 }
 html,
 body {
@@ -25,8 +52,14 @@ body {
   min-height: 100vh;
   background-attachment: fixed;
   overscroll-behavior: none;
-  font-family: var(--site-font);
+  font-family: var(--body-font);
   line-height: 1.4;
+}
+
+/* Headings should use the system / heading font, not the rounded body font */
+h1, h2, h3, h4, h5, h6, .project-title, .hero-heading, .contact-title, .projects-inner h2, .experience-inner h2, .contributions-inner h2 {
+  font-family: var(--heading-font);
+  font-weight: 800; /* use the extra-bold font file for headings */
 }
 
 .site-nav{
@@ -1057,6 +1090,12 @@ a:hover, button:hover, .btn:hover, .project-cta:hover, .download-cv:hover, .gith
   transform: translateY(-6px) scale(1.02);
   filter: brightness(1.06) saturate(1.02);
   box-shadow: 0 14px 34px rgba(0,122,255,0.18);
+}
+
+/* Buttons: use the bold local rounded Arial font for button text */
+button, .btn, .project-cta, .contact-cta, .github-cta, .download-cv, .btn-send, .nav-cta, .mobile-sidebar a {
+  font-family: 'ArialRoundedMT', var(--heading-font);
+  font-weight: 700;
 }
 
 

@@ -152,7 +152,6 @@ section{scroll-margin-top:calc(var(--nav-height) + 8px)}
   font-weight:800;
   line-height:0.98;
   margin:0 auto;
-  /* Taille réduite de 50% sur min / vw / max */
   font-size:clamp(1.9rem,6.5vw,6rem);
   letter-spacing:-0.01em;
   -webkit-font-smoothing:antialiased;
@@ -692,6 +691,8 @@ body.overlay-active footer{
 .project-desc{color:#d1d5db;overflow-wrap:break-word}
 .project-tags{display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:6px}
 .project-tags span{background:rgba(255,255,255,0.03);padding:0.25rem 0.5rem;border-radius:6px;font-size:0.85rem;color:#9ca3af}
+.project-tags span.tag-with-icon{display:inline-flex;align-items:center;gap:0.45rem}
+.project-tags span.tag-with-icon img{width:18px;height:18px;display:block;object-fit:contain}
 .project-links{margin-top:auto;display:flex;gap:0.6rem}
 .project-links .btn{padding:0.55rem 0.9rem}
 

@@ -1,15 +1,7 @@
-// Script: gate animations behind FaceID; manage audio, UI and reveal flows.
-// Pause animations until FaceID flow completes.
 document.documentElement.classList.add('animations-paused');
-
-// Global speed factor for non-button animations. Increase to slow animations
-// slightly. Buttons keep their original timings.
 const __ANIM_SPEED_FACTOR = 1.3;
 
-// Audio unlock state for FaceID sound playback. We attempt to unlock audio
-// on the first user gesture (mouseenter on the FaceID element is considered
-// a user interaction) so that playing the confirmation sound later won't be
-// blocked by autoplay policies.
+
 let __audioUnlocked = false;
 let __faceidSoundQueued = false;
 let __userInteracted = false; // true after first user gesture
@@ -23,14 +15,14 @@ const __notifyAudio = new Audio(__notifySoundSrc);
 __notifyAudio.preload = 'auto';
 __notifyAudio.volume = 0.9;
 // Force load early so browser can fetch the file (subject to caching/CSP)
-  try { __notifyAudio.load(); } catch (e) { /* ignore */ }
+try { __notifyAudio.load(); } catch (e) { /* ignore */ }
 // Toggle switch sound (play instantly on user toggling notifications)
 const __toggleSoundSrc = 'public/sounds/iPhone Lock - Sound Effect (HD).mp3';
 let __toggleSoundQueued = false;
 const __toggleAudio = new Audio(__toggleSoundSrc);
 __toggleAudio.preload = 'auto';
 __toggleAudio.volume = 0.9;
-  try { __toggleAudio.load(); } catch (e) { /* ignore */ }
+try { __toggleAudio.load(); } catch (e) { /* ignore */ }
 
 function _playNotifySound() {
   try {
@@ -50,7 +42,7 @@ function _playNotifySound() {
 
 function _playToggleSound() {
   try {
-    try { __toggleAudio.currentTime = 0; } catch (e) {}
+    try { __toggleAudio.currentTime = 0; } catch (e) { }
     const p = __toggleAudio.play();
     if (p && typeof p.catch === 'function') {
       p.catch((err) => {
@@ -92,18 +84,18 @@ function _unlockAudioOnce() {
     const p = a.play();
     if (p && typeof p.then === 'function') {
       p.then(() => {
-        try { a.pause(); a.currentTime = 0; } catch (e) {}
+        try { a.pause(); a.currentTime = 0; } catch (e) { }
         __audioUnlocked = true;
         if (__faceidSoundQueued) { __faceidSoundQueued = false; _playFaceIdSound(); }
       }).catch((err) => {
         console.warn('Audio unlock attempt failed:', err);
       });
     } else {
-      try { a.pause(); a.currentTime = 0; } catch (e) {}
+      try { a.pause(); a.currentTime = 0; } catch (e) { }
       __audioUnlocked = true;
       if (__faceidSoundQueued) { __faceidSoundQueued = false; _playFaceIdSound(); }
     }
-    } catch (e) { console.warn('Audio unlock setup error', e); }
+  } catch (e) { console.warn('Audio unlock setup error', e); }
 }
 
 // Background music: looped track that should start after FaceID + apple-pay
@@ -117,7 +109,7 @@ function _createBgAudio() {
     __bgAudio.preload = 'auto';
     __bgAudio.loop = true;
     __bgAudio.volume = 0.28;
-    try { __bgAudio.load(); } catch (e) {}
+    try { __bgAudio.load(); } catch (e) { }
   } catch (e) {
     console.warn('Unable to create background audio', e);
   }
@@ -141,7 +133,7 @@ function _startBackgroundMusic() {
 // When FaceID finishes, start background music after the face-id audio ends
 document.addEventListener('faceid:done', function () {
   try {
-    const startIfReady = function () { try { _startBackgroundMusic(); } catch (e) {} };
+    const startIfReady = function () { try { _startBackgroundMusic(); } catch (e) { } };
     const last = window.__lastFaceIdAudio;
     if (last && typeof last.addEventListener === 'function') {
       if (last.ended) startIfReady();
@@ -172,8 +164,8 @@ function _attachAudioUnlockListeners() {
   function handler() {
     try {
       __userInteracted = true;
-      try { _unlockAudioOnce(); } catch (e) {}
-      try { _flushQueuedAudio(); } catch (e) {}
+      try { _unlockAudioOnce(); } catch (e) { }
+      try { _flushQueuedAudio(); } catch (e) { }
     } finally {
       document.removeEventListener('pointerdown', handler);
       document.removeEventListener('touchstart', handler);
@@ -200,7 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const len = Math.max(1, text.length);
     el.style.setProperty('--chars', `${len}ch`);
 
-  if (prefersReduced) {
+    if (prefersReduced) {
       el.style.width = `${len}ch`;
       el.style.borderRight = 'transparent';
     } else {
@@ -221,7 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const enabled = saved === null ? false : saved === '1';
     toggle.checked = enabled;
     toggle.setAttribute('aria-checked', String(enabled));
-  // Prevent double-play: when sound played on pointerdown/keydown set flag
+    // Prevent double-play: when sound played on pointerdown/keydown set flag
     let __toggleSoundPlayed = false;
     function markToggleSoundPlayed() {
       __toggleSoundPlayed = true;
@@ -230,21 +222,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Play on immediate user press for lowest latency.
     toggle.addEventListener('pointerdown', (e) => {
-      try { _playToggleSound(); markToggleSoundPlayed(); } catch (err) {}
+      try { _playToggleSound(); markToggleSoundPlayed(); } catch (err) { }
     });
     // Also support keyboard activation (Space / Enter)
     toggle.addEventListener('keydown', (e) => {
       if (e.key === ' ' || e.key === 'Spacebar' || e.key === 'Enter') {
-        try { _playToggleSound(); markToggleSoundPlayed(); } catch (err) {}
+        try { _playToggleSound(); markToggleSoundPlayed(); } catch (err) { }
       }
     });
 
-  // Change handler: persist state and play feedback sound if needed.
+    // Change handler: persist state and play feedback sound if needed.
     toggle.addEventListener('change', (e) => {
       const on = e.target.checked;
       localStorage.setItem(KEY, on ? '1' : '0');
       toggle.setAttribute('aria-checked', String(on));
-      if (!__toggleSoundPlayed) try { _playToggleSound(); } catch (err) {}
+      if (!__toggleSoundPlayed) try { _playToggleSound(); } catch (err) { }
     });
   }
 });
@@ -337,21 +329,21 @@ document.addEventListener('DOMContentLoaded', () => {
   updateSubmitState();
 
   form.addEventListener('submit', (e) => {
-  // On submit, show browser bubbles for invalid fields and send via SiteAPI
+    // On submit, show browser bubbles for invalid fields and send via SiteAPI
     const okEmail = validateEmail(true);
     const okMessage = validateMessage(true);
     updateSubmitState();
     if (!okEmail) { e.preventDefault(); email.focus(); return; }
     if (!okMessage) { e.preventDefault(); message.focus(); return; }
 
-  // disable submit while sending
+    // disable submit while sending
     e.preventDefault();
     submitBtn.disabled = true; submitBtn.setAttribute('aria-busy', 'true');
 
     // Attempt to send emails via SiteAPI (EmailJS). SiteAPI.sendContactEmails returns a Promise.
     if (window.SiteAPI && typeof window.SiteAPI.sendContactEmails === 'function') {
-  window.SiteAPI.sendContactEmails({ name: '', email: email.value.trim(), message: message.value.trim() })
-  .then(() => {
+      window.SiteAPI.sendContactEmails({ name: '', email: email.value.trim(), message: message.value.trim() })
+        .then(() => {
           if (confirmation) {
             confirmation.hidden = false;
             confirmation.style.opacity = '0';
@@ -419,7 +411,7 @@ document.addEventListener('DOMContentLoaded', () => {
     hoverAllowed = false;
     const enableHover = function () {
       hoverAllowed = true;
-      try { document.removeEventListener('pointerdown', enableHover); } catch (e) {}
+      try { document.removeEventListener('pointerdown', enableHover); } catch (e) { }
       // If the pointer is already over the faceId element when hover is enabled,
       // trigger the same behavior as a mouseenter so the animation starts immediately.
       try {
@@ -435,7 +427,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (isTouchDevice) {
-  // Mobile: single tap activates FaceID. Update hint text for touch devices.
+    // Mobile: single tap activates FaceID. Update hint text for touch devices.
     try {
       const hint = document.querySelector('.faceid-hint');
       if (hint) {
@@ -465,7 +457,7 @@ document.addEventListener('DOMContentLoaded', () => {
               faceId.classList.remove('active'); faceId.classList.remove('completed');
               document.documentElement.classList.remove('animations-paused');
               document.dispatchEvent(new CustomEvent('faceid:done'));
-            } catch (err) {}
+            } catch (err) { }
           }
         };
         overlay.addEventListener('transitionend', onFadeEnd);
@@ -475,9 +467,9 @@ document.addEventListener('DOMContentLoaded', () => {
     faceId.addEventListener('pointerdown', function (e) {
       if (triggered) return;
       triggered = true;
-      try { e.preventDefault(); } catch (err) {}
+      try { e.preventDefault(); } catch (err) { }
       faceId.classList.add('active');
-      try { _unlockAudioOnce(); } catch (e) {}
+      try { _unlockAudioOnce(); } catch (e) { }
 
       // Match desktop timing: wait `completeDelay` before marking completed
       // so the tick animation and pacing match the desktop experience.
@@ -493,7 +485,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function _handleFaceIdMouseEnter() {
       if (!hoverAllowed) return;
-      faceId.classList.add('active'); try { _unlockAudioOnce(); } catch (e) {}
+      faceId.classList.add('active'); try { _unlockAudioOnce(); } catch (e) { }
       desktopTimer = setTimeout(() => {
         faceId.classList.add('completed');
         setTimeout(() => { try { if (__audioUnlocked) _playFaceIdSound(); else __faceidSoundQueued = true; } catch (err) { console.warn('Error playing FaceID sound', err); } }, dashDuration + 2);
@@ -502,7 +494,7 @@ document.addEventListener('DOMContentLoaded', () => {
           const onFadeEnd = (e) => {
             if (e.propertyName === 'opacity') {
               overlay.classList.add('hidden'); overlay.classList.remove('fade-out'); document.body.classList.remove('overlay-active'); overlay.removeEventListener('transitionend', onFadeEnd);
-              try { document.documentElement.classList.remove('animations-paused'); document.dispatchEvent(new CustomEvent('faceid:done')); } catch (err) {}
+              try { document.documentElement.classList.remove('animations-paused'); document.dispatchEvent(new CustomEvent('faceid:done')); } catch (err) { }
             }
           };
           overlay.addEventListener('transitionend', onFadeEnd);
@@ -519,8 +511,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Safe mouseleave: cancel pending timers
-  faceId.addEventListener('mouseleave', function() {
-    try { if (timer) { clearTimeout(timer); timer = null; } } catch (e) {}
+  faceId.addEventListener('mouseleave', function () {
+    try { if (timer) { clearTimeout(timer); timer = null; } } catch (e) { }
     this.classList.remove('active');
     this.classList.remove('completed');
   });
@@ -530,7 +522,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function initRevealOnScroll() {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-    const selectors = [
+  const selectors = [
     'section',
     '.project-card',
     '.experience-item:not(.no-reveal)',
@@ -698,7 +690,7 @@ document.addEventListener('DOMContentLoaded', function () {
     toggle.checked = !!checked;
     toggle.setAttribute('aria-checked', checked ? 'true' : 'false');
     document.body.classList.toggle('notifications-enabled', !!checked);
-    try { localStorage.setItem('email.notify', checked ? '1' : '0'); } catch (e) {}
+    try { localStorage.setItem('email.notify', checked ? '1' : '0'); } catch (e) { }
   }
 
   // Call when OneSignal is available; supports push/deferred patterns.
@@ -767,11 +759,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
   toggle.addEventListener('change', function (e) {
     if (e.target.checked) {
-  // if already injected, do nothing
+      // if already injected, do nothing
       if (document.getElementById('pushalert-exec')) return;
 
       // create a script element whose content is the exact IIFE from your snippet
-  const s = document.createElement('script');
+      const s = document.createElement('script');
       s.id = 'pushalert-exec';
       s.type = 'text/javascript';
       s.text = `(function(d, t) {
@@ -808,7 +800,7 @@ document.addEventListener('DOMContentLoaded', function () {
     backdrop.classList.add('open');
     backdrop.hidden = false;
     toggle.setAttribute('aria-expanded', 'true');
-  // lock scroll
+    // lock scroll
     document.documentElement.style.overflow = 'hidden';
     // move focus into sidebar
     var firstLink = sidebar.querySelector('a'); if (firstLink) firstLink.focus();
@@ -992,7 +984,7 @@ document.addEventListener('DOMContentLoaded', function () {
           document.body.appendChild(_clone);
           const navHeight = nav ? nav.offsetHeight : (parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-height')) || 64);
           _clone.style.position = 'fixed';
-          _clone.style.top = ( (nav ? nav.getBoundingClientRect().top : 0) + navHeight + 8 ) + 'px';
+          _clone.style.top = ((nav ? nav.getBoundingClientRect().top : 0) + navHeight + 8) + 'px';
           _clone.style.right = (window.innerWidth <= 420 ? '12px' : '20px');
           _clone.style.left = '';
           requestAnimationFrame(() => { if (_clone) _clone.classList.add('floating--visible'); });
@@ -1021,7 +1013,7 @@ document.addEventListener('DOMContentLoaded', function () {
               // clone might be appended to body as fixed fallback
               if (_clone.parentNode) _clone.parentNode.removeChild(_clone);
             }
-          } catch (e) { try { if (_clone.parentNode) _clone.parentNode.removeChild(_clone); } catch (e2) {} }
+          } catch (e) { try { if (_clone.parentNode) _clone.parentNode.removeChild(_clone); } catch (e2) { } }
 
           _clone = null;
           _visible = false;
@@ -1030,7 +1022,7 @@ document.addEventListener('DOMContentLoaded', function () {
         _clone.addEventListener('animationend', onAnimEnd);
         _clone.classList.add('floating--hide');
       } else {
-        try { if (_clone.parentNode) _clone.parentNode.removeChild(_clone); } catch (e) {}
+        try { if (_clone.parentNode) _clone.parentNode.removeChild(_clone); } catch (e) { }
         _clone = null;
         _visible = false;
         _movedIntoNav = false;
@@ -1086,5 +1078,59 @@ document.addEventListener('DOMContentLoaded', function () {
 
   if (document.readyState === 'complete' || document.readyState === 'interactive') initFloatingContact();
   else document.addEventListener('DOMContentLoaded', initFloatingContact);
+})();
+
+// Active nav link indicator based on visible section
+(function activeNavIndicator() {
+  function init() {
+    const navLinks = document.querySelectorAll('.nav-link[href^="#"]');
+    if (!navLinks.length) return;
+
+    // Map each nav link to its target section
+    const sectionMap = new Map();
+    navLinks.forEach(link => {
+      const href = link.getAttribute('href');
+      if (!href || href === '#') return;
+      const targetId = href.substring(1);
+      const section = document.getElementById(targetId);
+      if (section) {
+        sectionMap.set(section, link);
+      }
+    });
+
+    if (!sectionMap.size) return;
+
+    // Intersection Observer to detect which section is in view
+    const observerOptions = {
+      root: null,
+      rootMargin: '-20% 0px -60% 0px', // Adjust to trigger when section is ~20% from top
+      threshold: 0
+    };
+
+    let activeLink = null;
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const link = sectionMap.get(entry.target);
+        if (!link) return;
+
+        if (entry.isIntersecting) {
+          // Remove active from all links
+          navLinks.forEach(l => l.classList.remove('active'));
+          // Add active to current
+          link.classList.add('active');
+          activeLink = link;
+        }
+      });
+    }, observerOptions);
+
+    // Observe all sections
+    sectionMap.forEach((link, section) => {
+      observer.observe(section);
+    });
+  }
+
+  if (document.readyState === 'complete' || document.readyState === 'interactive') init();
+  else document.addEventListener('DOMContentLoaded', init);
 })();
 

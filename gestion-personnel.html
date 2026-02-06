@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion du Personnel - Nathan Michel</title>
+    <link rel="icon" type="image/png" href="/public/favicon/Icon-iOS-Dark-1024x1024@1x.png">
+    <link rel="stylesheet" href="src/css/style.css">
+    <link rel="preload" href="/public/fonts/ARIALROUNDEDMT.TTF" as="font" type="font/ttf" crossorigin>
+    <style>
+        :root {
+            --accent-color: #ffffff;
+            --secondary-accent: #ffffff;
+            --text-muted: #9ca3af;
+            --bg-card: rgba(255, 255, 255, 0.03);
+            --border-color: rgba(255, 255, 255, 0.06);
+        }
+
+        body {
+            background-color: #050505 !important;
+            color: #fff !important;
+        }
+
+        /* --- Section 1: Hero Agencement --- */
+        .showcase-hero {
+            padding: 6rem 1rem 4rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+            transition: opacity 0.2s;
+        }
+
+        .back-link:hover {
+            opacity: 0.8;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .hero-mockup-container {
+            position: relative;
+            width: 100%;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 300px;
+            overflow: hidden;
+        }
+
+        .mockup-main-img {
+            max-width: 80%;
+            max-height: 450px;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+            border: 4px solid #111;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 44px;
+            height: 44px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-arrow:hover {
+            background: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+
+        .nav-arrow img {
+            width: 16px;
+            filter: invert(1);
+        }
+
+        .arrow-left { left: 20px; }
+        .arrow-right { right: 20px; }
+
+        .mockup-dots {
+            position: absolute;
+            bottom: 20px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+        }
+
+        .dot.active {
+            background: #fff;
+            width: 24px;
+            border-radius: 4px;
+        }
+
+        .hero-titles {
+            margin-top: 2rem;
+        }
+
+        .hero-titles h1 {
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            font-weight: 800;
+            margin: 0;
+            line-height: 1.1;
+        }
+
+        .hero-titles h2 {
+            font-size: clamp(1.1rem, 2vw, 1.4rem);
+            color: var(--text-muted); 
+            margin-top: 1rem;
+            font-weight: 600;
+            text-transform: none;
+        }
+
+        /* --- Section 2: Summary & Info Agencement --- */
+        .content-layout {
+            display: grid;
+            grid-template-columns: 1.8fr 1fr;
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 4rem auto;
+            padding: 0 1rem;
+        }
+
+        .summary-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2.5rem;
+        }
+
+        .summary-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            font-weight: 800;
+        }
+
+        .summary-card p {
+            color: var(--text-muted);
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+            font-size: 1.05rem;
+        }
+
+        .info-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .info-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .info-card h4, .info-list {
+            width: 100%;
+        }
+
+        .info-card h4 {
+            color: #fff;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .info-list {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 2rem;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            font-size: 0.95rem;
+        }
+
+        .info-label {
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-label img {
+            width: 18px;
+            filter: opacity(0.6) invert(1);
+        }
+
+        .info-value {
+            font-weight: 700;
+        }
+
+        .visit-btn, .doc-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.75rem 1.15rem;
+            background: rgba(12, 14, 16, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02), 0 8px 22px rgba(2, 6, 23, 0.6);
+            transition: transform .16s ease, filter .12s ease;
+            position: relative;
+            z-index: 2;
+            width: fit-content;
+        }
+
+        .visit-btn::before, .doc-btn::before {
+            content: "";
+            position: absolute;
+            z-index: -1;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 180px;
+            height: 48px;
+            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 22%, rgba(0, 0, 0, 0) 45%);
+            filter: blur(14px) saturate(1.05);
+            border-radius: 8px;
+            pointer-events: none;
+            opacity: 0.92;
+        }
+
+        .visit-btn:hover, .doc-btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+            color: #fff !important;
+        }
+
+        .visit-btn img, .doc-btn img {
+            width: 16px;
+            height: 16px;
+            filter: invert(1);
+        }
+
+        .sidebar-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .tech-section {
+            max-width: 1200px;
+            margin: 4rem auto 8rem;
+            padding: 0 1rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .tech-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2.5rem;
+            width: 100%;
+            text-align: center;
+        }
+
+        .tech-container h3 {
+            color: #fff;
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+            gap: 1rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            justify-items: center;
+        }
+
+        .tech-item {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 1.5rem 0.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s;
+            aspect-ratio: 1 / 1;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .tech-item:hover {
+            border-color: #fff;
+            background: rgba(255, 255, 255, 0.03);
+            transform: translateY(-4px);
+        }
+
+        .tech-item img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            transition: transform 0.3s;
+        }
+
+        .tech-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .tech-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        /* --- Footer Styles --- */
+        footer {
+            border-top: 1px solid var(--border-color);
+        }
+
+        @media (max-width: 900px) {
+            .content-layout {
+                grid-template-columns: 1fr;
+            }
+            .tech-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* Animation class logic like index */
+        html.animations-paused body { opacity: 1; }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="site-nav" role="navigation" aria-label="Navigation principale">
+      <div class="nav-inner">
+        <div class="nav-left">
+          <a class="site-title" href="index.html">Nathan Michel</a>
+        </div>
+        <div class="nav-right">
+          <a class="nav-link" href="index.html#formation-heading" title="Formation"><img src="public/icons/mortar-board-16.svg" alt="Formation icon" aria-hidden="true"></a>
+          <a class="nav-link" href="index.html#experience-heading" title="Expérience"><img src="public/icons/organization-16.svg" alt="Expérience icon" aria-hidden="true"></a>
+          <a class="nav-link" href="index.html#projects-heading" title="Projets"><img src="public/icons/repo-16.svg" alt="Projets icon" aria-hidden="true"></a>
+          <a class="nav-link" href="index.html#contrib-heading" title="Contributions"><img src="public/icons/git-commit-16.svg" alt="Contributions icon" aria-hidden="true"></a>
+          <a class="nav-link" href="index.html#tools-heading" title="Outils"><img src="public/icons/package-16.svg" alt="Outils icon" aria-hidden="true"></a>
+          <a class="nav-link" href="index.html#skills-heading" title="Compétences"><img src="public/icons/terminal-16.svg" alt="Compétences icon" aria-hidden="true"></a>
+          <a class="nav-cta" href="public/docs/nathan-cv.pdf" target="_blank" rel="noopener" title="Lire mon CV">Lire mon CV</a>
+        </div>
+        <!-- Mobile kebab toggle -->
+        <button id="mobileNavToggle" class="mobile-nav-toggle" aria-label="Ouvrir le menu" aria-expanded="false">
+          <img src="public/icons/kebab-horizontal-16.svg" alt="menu">
+        </button>
+      </div>
+    </nav>
+
+    <main class="showcase-hero">
+        <a href="index.html#projects-heading" class="back-link">
+            <img src="public/icons/arrow-left-24.svg" alt="" style="width: 18px; filter: invert(1);" onerror="this.src='public/icons/icons8-flèche-30 gauche.png'; this.style.filter='invert(1)';">
+            Retour aux projets
+        </a>
+
+        <div class="hero-mockup-container">
+            <div class="nav-arrow arrow-left"><img src="public/icons/icons8-flèche-30 gauche.png" alt="Prev"></div>
+            <img src="public/images/163288-logo_java_pile_complete-java-langage_de_programmation-javascript-permanent-3840x2160.png" class="mockup-main-img" alt="Main Interface">
+            <div class="nav-arrow arrow-right"><img src="public/icons/icons8-flèche-30 droite.png" alt="Next"></div>
+            
+            <div class="mockup-dots">
+                <div class="dot active"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+        </div>
+
+        <div class="hero-titles">
+            <h1>Application de gestion des employés des ligues – M2L</h1>
+            <h2>application console pour gérer des ligues et employés, avec persistance configurable, tests unitaires et architecture orientée objet.</h2>
+        </div>
+    </main>
+
+    <section class="content-layout">
+        <div class="summary-card">
+            <h3>Résumé du projet</h3>
+            <p>
+                Ce projet Java implémente un gestionnaire de personnel orienté ligues, conçu pour illustrer des bonnes pratiques de conception orientée objet et la persistance des données. L'application fournit un modèle GestionPersonnel (singleton) gérant des Ligue et des Employe, avec deux modes de persistance interchangeables : sérialisation et accès JDBC. Le code inclut une couche de passerelle pour isoler la stratégie de sauvegarde, des tests unitaires et une interface console pour les opérations courantes (création de ligues, gestion des droits, sauvegarde/restauration). 
+            </p>
+            <p>
+                Cette application de gestion du personnel démontre ma capacité à modéliser un domaine métier, isoler les stratégies de persistance et fournir une suite de tests unitaires pour assurer le bon fonctionnement du programme.
+            </p>
+            <p>
+                Ce projet a été réalisé en équipe avec Java SE, avec l’IDE Eclipse, avec MySQL, avec Git et Github, avec ce projet j’ai pu appliquer mes connaissances en programmation orienté objet sur un projet concret
+            </p>
+        </div>
+
+        <aside class="info-sidebar">
+            <div class="info-card">
+                <h4>Project Info</h4>
+                <ul class="info-list">
+                    <li class="info-item">
+                        <span class="info-label"><img src="public/icons/calendar.svg" alt="" onerror="this.src='public/icons/repo-16.svg'">Début du projet:</span>
+                        <span class="info-value">Novembre 2025</span>
+                    </li>
+                    <li class="info-item">
+                        <span class="info-label"><img src="public/icons/calendar.svg" alt="" onerror="this.src='public/icons/repo-16.svg'">Fin du projet:</span>
+                        <span class="info-value" style="color: #000; background: #fff; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem;">Avril 2026</span>
+                    </li>
+                    <li class="info-item">
+                        <span class="info-label"><img src="public/icons/clock.svg" alt="" onerror="this.src='public/icons/repo-16.svg'"> Durée:</span>
+                        <span class="info-value">5 mois</span>
+                    </li>
+                    <li class="info-item">
+                        <span class="info-label"><img src="public/icons/terminal-16.svg" alt=""> Technologies:</span>
+                        <span class="info-value">6 utilisées</span>
+                    </li>
+                    <li class="info-item">
+                        <span class="info-label"><img src="public/icons/repo-16.svg" alt=""> Images:</span>
+                        <span class="info-value">3 disponibles</span>
+                    </li>
+                </ul>
+                <div class="sidebar-actions">
+                    <a href="https://github.com/Squid-Nayth/Atelier-Pro" class="visit-btn" target="_blank">
+                        <img src="public/icons/mark-github-16.svg" alt="">
+                        Visiter le GitHub
+                    </a>
+                    <a href="https://hackmd.io/@w2forYySRcKLyKtg6ZlW0A/Bk_Zz8QPWg" class="doc-btn" target="_blank">
+                        <img src="public/icons/info-16.svg" alt="">
+                        Documentation
+                    </a>
+                </div>
+            </div>
+        </aside>
+    </section>
+
+    <section class="tech-section">
+        <div class="tech-container">
+            <h3>Technologies utilisées</h3>
+            <div class="tech-grid">
+                <div class="tech-item">
+                    <img src="public/images/java-original.svg" alt="Java">
+                    <span class="tech-name">Java</span>
+                </div>
+                <div class="tech-item">
+                    <img src="public/images/mysql-original-wordmark.svg" alt="MySQL">
+                    <span class="tech-name">MySQL</span>
+                </div>
+                <div class="tech-item">
+                    <img src="public/images/git.svg" alt="Git">
+                    <span class="tech-name">Git</span>
+                </div>
+                <div class="tech-item">
+                    <img src="public/images/intellij-original.svg" alt="IntelliJ">
+                    <span class="tech-name">IntelliJ</span>
+                </div>
+                <div class="tech-item">
+                    <img src="public/icons/package-16.svg" alt="JDBC" style="filter: invert(1);">
+                    <span class="tech-name">JDBC</span>
+                </div>
+                <div class="tech-item">
+                    <img src="public/images/icons8-github-94.png" alt="GitHub">
+                    <span class="tech-name">GitHub</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="site-footer contact-section">
+        <div class="contact-inner">
+          <div class="contact-top">
+            <div class="switch-box">
+              <label class="switch big-switch" title="Notifications">
+                <input type="checkbox" id="emailToggle">
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="contact-copy">
+              <h2 class="contact-title">Vous aimez mon travail ?</h2>
+              <p class="contact-desc">Activez les notifications pour être au courant des nouveautés.</p>
+            </div>
+          </div>
+          <div class="contact-bottom">
+            <div class="contact-line">
+              <span class="contact-name">Nathan Michel &copy; 2026</span>
+              <span class="contact-spacer">&nbsp;&mdash;&nbsp;</span>
+              <a class="contact-email" href="mailto:nathanmichel@eva-studio.dev">nathanmichel@eva-studio.dev</a>
+              <a class="contact-link" href="https://www.linkedin.com/in/nathan-michel-nkombe-lasseni-474ab930a/">LinkedIn</a>
+            </div>
+          </div>
+        </div>
+    </footer>
+
+    <script src="src/js/script.js" defer></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.documentElement.classList.remove('animations-paused');
+            document.dispatchEvent(new CustomEvent('faceid:done'));
+
+            // Slider Logic
+            const images = [
+                "public/images/163288-logo_java_pile_complete-java-langage_de_programmation-javascript-permanent-3840x2160.png",
+                "public/assets/portfolio/Capture d’écran 2026-02-06 à 11.35.09.png",
+                "public/assets/portfolio/Mcd.2.png"
+            ];
+            let currentIndex = 0;
+            const mainImg = document.querySelector('.mockup-main-img');
+            const dots = document.querySelectorAll('.dot');
+            const prevBtn = document.querySelector('.arrow-left');
+            const nextBtn = document.querySelector('.arrow-right');
+
+            function updateSlider(index) {
+                currentIndex = index;
+                mainImg.style.opacity = '0';
+                setTimeout(() => {
+                    mainImg.src = images[currentIndex];
+                    mainImg.style.opacity = '1';
+                    dots.forEach((dot, i) => {
+                        dot.classList.toggle('active', i === currentIndex);
+                    });
+                }, 300);
+            }
+
+            if (prevBtn && nextBtn) {
+                prevBtn.addEventListener('click', () => {
+                    let index = (currentIndex - 1 + images.length) % images.length;
+                    updateSlider(index);
+                });
+
+                nextBtn.addEventListener('click', () => {
+                    let index = (currentIndex + 1) % images.length;
+                    updateSlider(index);
+                });
+            }
+
+            dots.forEach((dot, i) => {
+                dot.addEventListener('click', () => updateSlider(i));
+            });
+        });
+    </script>
+</body>
+</html>

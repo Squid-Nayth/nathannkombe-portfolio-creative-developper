@@ -88,9 +88,28 @@ h1, h2, h3, h4, h5, h6, .project-title, .hero-heading, .contact-title, .projects
   transition: transform 380ms cubic-bezier(.22,1.4,.36,1), margin 320ms cubic-bezier(.22,1.4,.36,1), opacity 180ms ease;
   will-change: transform, margin, opacity;
 }
-.nav-link{display:inline-flex;align-items:center;justify-content:center;padding:8px;border-radius:8px;text-decoration:none}
+.nav-link{display:inline-flex;align-items:center;justify-content:center;padding:8px;border-radius:8px;text-decoration:none;position:relative}
 .nav-link img{width:18px;height:18px;display:block;filter:invert(1) brightness(1);opacity:0.95}
 .nav-link:hover{background:rgba(255,255,255,0.02)}
+
+/* Active indicator: small blue dot below the icon */
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  background: #007aff;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.nav-link.active::after {
+  opacity: 1;
+}
 .nav-cta{margin-left:6px;padding:6px 10px;border-radius:999px;background:transparent;border:1px solid rgba(255,255,255,0.06);color:#fff;font-weight:700;text-decoration:none}
 
 main{padding-top:64px}

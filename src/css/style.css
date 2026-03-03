@@ -155,6 +155,60 @@ html{scroll-behavior:smooth}
 :root{--nav-height:64px}
 section{scroll-margin-top:calc(var(--nav-height) + 8px)}
 
+/* Background Music Control */
+.bg-music-control {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 45px;
+  height: 45px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  transition: all 0.3s var(--transition-smooth, ease);
+  color: var(--text-primary, #fff);
+}
+
+.bg-music-control:hover {
+  background: rgba(0, 0, 0, 0.05);
+  transform: scale(1.1);
+}
+
+.bg-music-control.muted {
+  opacity: 0.5;
+}
+
+.bg-music-control svg {
+  transition: transform 0.3s ease;
+}
+
+.bg-music-control .bg-music-mute {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.bg-music-control.muted .bg-music-wave {
+  opacity: 0;
+}
+
+.bg-music-control.muted .bg-music-mute {
+  opacity: 1;
+}
+
+.bg-music-control:active svg {
+  transform: scale(0.9);
+}
+
+body.overlay-active .bg-music-control {
+  opacity: 0;
+  pointer-events: none;
+}
+
 
 .hero{
   min-height: calc(100vh - var(--nav-height));
@@ -1395,6 +1449,15 @@ button, .btn, .project-cta, .contact-cta, .github-cta, .download-cv, .btn-send, 
   .contact-desc{font-size:0.86rem}
   .contact-line{gap:0.45rem;font-size:0.82rem}
   .contact-cta.floating{right:8px;padding:0.34rem 0.5rem !important;font-size:0.76rem !important}
+}
+
+@media (max-width: 768px) {
+  .bg-music-control {
+    bottom: 1.5rem;
+    right: 1.5rem;
+    width: 40px;
+    height: 40px;
+  }
 }
 
 @media (max-width:420px){

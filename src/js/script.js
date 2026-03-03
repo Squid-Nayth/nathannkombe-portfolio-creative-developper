@@ -23,8 +23,51 @@ const __toggleAudio = new Audio(__toggleSoundSrc);
 __toggleAudio.preload = 'auto';
 __toggleAudio.volume = 0.9;
 try { __toggleAudio.load(); } catch (e) { /* ignore */ }
+const __audioPreferenceKey = 'site.audio.muted';
+let __siteAudioMuted = false;
+try {
+  __siteAudioMuted = localStorage.getItem(__audioPreferenceKey) === '1';
+} catch (e) { /* ignore */ }
+
+function _syncMusicControlUI() {
+  const control = document.getElementById('bgMusicControl');
+  if (!control) return;
+  control.classList.toggle('muted', __siteAudioMuted);
+  control.setAttribute('aria-pressed', String(__siteAudioMuted));
+  const label = __siteAudioMuted ? 'Réactiver le son du site' : 'Couper le son du site';
+  control.setAttribute('aria-label', label);
+  control.setAttribute('title', label);
+}
+
+function _applyGlobalAudioState() {
+  try { __notifyAudio.muted = __siteAudioMuted; } catch (e) { /* ignore */ }
+  try { __toggleAudio.muted = __siteAudioMuted; } catch (e) { /* ignore */ }
+  try {
+    if (__bgAudio) {
+      __bgAudio.muted = __siteAudioMuted;
+      if (__siteAudioMuted) __bgAudio.pause();
+    }
+  } catch (e) { /* ignore */ }
+  try {
+    if (window.__lastFaceIdAudio) window.__lastFaceIdAudio.muted = __siteAudioMuted;
+  } catch (e) { /* ignore */ }
+  _syncMusicControlUI();
+}
+
+function _setSiteAudioMuted(nextMuted) {
+  __siteAudioMuted = Boolean(nextMuted);
+  try { localStorage.setItem(__audioPreferenceKey, __siteAudioMuted ? '1' : '0'); } catch (e) { /* ignore */ }
+  _applyGlobalAudioState();
+  if (!__siteAudioMuted) {
+    try { _flushQueuedAudio(); } catch (e) { /* ignore */ }
+    if (!document.documentElement.classList.contains('animations-paused')) {
+      try { _startBackgroundMusic(); } catch (e) { /* ignore */ }
+    }
+  }
+}
 
 function _playNotifySound() {
+  if (__siteAudioMuted) return;
   try {
     // Play the preloaded audio instance for lowest latency.
     try {
@@ -41,6 +84,7 @@ function _playNotifySound() {
 }
 
 function _playToggleSound() {
+  if (__siteAudioMuted) return;
   try {
     try { __toggleAudio.currentTime = 0; } catch (e) { }
     const p = __toggleAudio.play();
@@ -54,9 +98,11 @@ function _playToggleSound() {
 }
 
 function _playFaceIdSound() {
+  if (__siteAudioMuted) return;
   try {
     const audio = new Audio(__faceidSoundSrc);
     audio.volume = 0.9;
+    audio.muted = __siteAudioMuted;
     try { window.__lastFaceIdAudio = audio; } catch (e) { /* ignore */ }
     // Do not attempt to play until the user has interacted.
     if (!__userInteracted) {
@@ -122,6 +168,7 @@ function _createBgAudio() {
 function _primeBackgroundMusic() {
   const bg = _createBgAudio();
   if (!bg || __bgAudioPrimed) return;
+  if (__siteAudioMuted) return;
   try {
     const prevMuted = bg.muted;
     const prevVolume = bg.volume;
@@ -158,6 +205,10 @@ function _primeBackgroundMusic() {
 }
 
 function _startBackgroundMusic() {
+  if (__siteAudioMuted) {
+    __bgMusicQueued = true;
+    return;
+  }
   const bg = _createBgAudio();
   if (!bg) return;
   if (__audioUnlocked) {
@@ -222,17 +273,29 @@ function _attachAudioUnlockListeners() {
   document.addEventListener('keydown', handler, { once: true });
 }
 _attachAudioUnlockListeners();
+_applyGlobalAudioState();
 
 function _stopBackgroundMusic() {
   if (!__bgAudio) return;
   try {
     __bgAudio.pause();
-    __bgAudio.currentTime = 0;
+    if (!__siteAudioMuted) __bgAudio.currentTime = 0;
   } catch (e) { /* ignore */ }
 }
 
 window.addEventListener('pagehide', _stopBackgroundMusic);
 window.addEventListener('beforeunload', _stopBackgroundMusic);
+
+document.addEventListener('DOMContentLoaded', () => {
+  const control = document.getElementById('bgMusicControl');
+  if (!control) return;
+  _syncMusicControlUI();
+  control.addEventListener('click', () => {
+    __userInteracted = true;
+    try { _unlockAudioOnce(); } catch (e) { /* ignore */ }
+    _setSiteAudioMuted(!__siteAudioMuted);
+  });
+});
 
 function runAfterFaceID(fn) {
   if (!document.documentElement.classList.contains('animations-paused')) fn();

@@ -55,6 +55,7 @@ body {
   min-height: 100vh;
   background-attachment: fixed;
   overscroll-behavior: none;
+  overflow-x: hidden;
   font-family: var(--body-font);
   line-height: 1.4;
 }
@@ -78,6 +79,18 @@ h1, h2, h3, h4, h5, h6, .project-title, .hero-heading, .contact-title, .projects
   border-bottom:1px solid rgba(255,255,255,0.02);
 }
 .nav-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;width:100%}
+.hero-inner,
+.intro-inner,
+.carousel-inner,
+.formation-inner,
+.experience-inner,
+.projects-inner,
+.contributions-inner,
+.contacts-inner,
+.contact-inner {
+  width: min(100%, 1100px);
+  min-width: 0;
+}
 .nav-left .site-title{color:#9ca3af;text-decoration:none;font-weight:800;font-size:0.95rem;padding:8px 6px}
 .nav-right{display:flex;align-items:center;gap:0.45rem}
 
@@ -700,7 +713,7 @@ body.overlay-active footer{
 .projects-inner{max-width:1100px;margin:0 auto}
 .projects-inner h2{font-size:2.2rem;margin-bottom:1rem;font-weight:800;color:#fff;display:inline-flex;align-items:center;gap:0.75rem}
 .projects-h2-icon{width:20px;height:20px;display:inline-block;filter:invert(1) brightness(1)}
-.projects-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.25rem;margin-top:1rem}
+.projects-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.25rem;margin-top:1rem;align-items:stretch}
 
 /* Center the last project card when it's on its own row (odd number of items)
    This keeps the layout balanced when there are 3, 5, ... project cards. */
@@ -711,7 +724,7 @@ body.overlay-active footer{
   max-width: calc((100% - 1.25rem) / 2);
   width: 100%;
 }
-.project-card{background:linear-gradient(180deg, #0b0b0b 0%, #070707 100%);border:1px solid rgba(255,255,255,0.04);border-radius:12px;box-shadow:0 12px 30px rgba(2,6,23,0.6);display:flex;gap:1rem;overflow:hidden;align-items:stretch}
+.project-card{background:linear-gradient(180deg, #0b0b0b 0%, #070707 100%);border:1px solid rgba(255,255,255,0.04);border-radius:12px;box-shadow:0 12px 30px rgba(2,6,23,0.6);display:flex;gap:1rem;overflow:hidden;align-items:stretch;min-width:0;height:100%}
 .project-media{flex:0 0 48%;min-width:160px;height:220px;overflow:hidden}
 .project-media img{width:100%;height:100%;object-fit:cover;display:block}
 .project-body{flex:1 1 52%;min-width:0;padding:1.25rem;display:flex;flex-direction:column;gap:0.6rem}
@@ -731,13 +744,14 @@ body.overlay-active footer{
   vertical-align: middle !important;
   flex: 0 0 auto !important;
 }
-.project-links{margin-top:auto;display:flex;gap:0.6rem}
+.project-links{margin-top:auto;display:flex;gap:0.6rem;flex-wrap:wrap;align-items:stretch}
 .project-links .btn{padding:0.55rem 0.9rem}
 
 /* Project CTA style inspired by attachment (small dark rounded button with icon left) */
 .project-cta{
   display:inline-flex;
   align-items:center;
+  justify-content:center;
   gap:0.6rem;
   padding:0.55rem 0.9rem;
   background: rgba(12,14,16,0.6);
@@ -768,6 +782,7 @@ body.overlay-active footer{
   .projects-grid{grid-template-columns:1fr;}
   .project-card{flex-direction:column}
   .project-media{width:100%;height:200px}
+  .projects-grid > .project-card:last-child:nth-child(odd){max-width:100%}
 }
 
 /* ---------- Contacts / Form ---------- */
@@ -1212,7 +1227,11 @@ button, .btn, .project-cta, .contact-cta, .github-cta, .download-cv, .btn-send, 
   .intro-summary{margin-top:3rem;padding:2.25rem 0.9rem}
   .intro-inner{gap:1rem}
   .projects-grid{grid-template-columns:1fr}
-  .project-media{height:160px}
+  .project-card{gap:0}
+  .project-media{min-width:0;height:180px}
+  .project-body{padding:1rem}
+  .project-links{gap:0.55rem}
+  .project-links .project-cta{flex:1 1 calc(50% - 0.55rem);min-width:140px}
   .carousel-slider{height:64px}
   .carousel-slider .slide img{max-height:56px}
   .contact-form input[type="email"], .contact-form textarea{padding:14px}
@@ -1231,6 +1250,10 @@ button, .btn, .project-cta, .contact-cta, .github-cta, .download-cv, .btn-send, 
   .github-calendar-card{padding:1rem}
   .mobile-sidebar{width:92%}
   .mobile-sidebar{padding:1.6rem 1rem}
+  .project-media{height:160px}
+  .project-links .project-cta{flex:1 1 100%;min-width:100%}
+  .contact-top{flex-direction:column;align-items:flex-start;gap:1rem}
+  .contact-line{gap:0.65rem}
 }
 
 @media (max-width:420px){
@@ -1238,7 +1261,7 @@ button, .btn, .project-cta, .contact-cta, .github-cta, .download-cv, .btn-send, 
   .github-cta{box-shadow:none}
 }
 
-/* Improve touch/mobile UX: reduce hover/transform effects and disable particle canvas on touch devices
+/* Improve touch/mobile UX: reduce hover/transform effects and keep the particle canvas lighter on touch devices
    - (pointer:coarse) typically matches phones & tablets with touch input
    - (hover: none) matches devices that don't support hover
    These rules keep visual polish on desktop while avoiding jumpy/teleporting particles and
@@ -1264,14 +1287,8 @@ button, .btn, .project-cta, .contact-cta, .github-cta, .download-cv, .btn-send, 
     transform: none !important;
   }
 
-  /* Hide the particle canvas on coarse-pointer devices to prevent teleport/jump issues during touch scroll */
   .hero-network {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
-    width: 0 !important; /* avoid layout differences */
-    height: 0 !important;
+    opacity: 0.92;
   }
 
   /* Reduce heavy decorative pseudo-elements that can overlap/touch on small screens */
@@ -1430,7 +1447,5 @@ body.overlay-active .contact-cta.floating{opacity:0;pointer-events:none}
   opacity:0.95;
   transform:translate3d(-50%,-50%,0) scale(1.03);
 }
-
-
 
 

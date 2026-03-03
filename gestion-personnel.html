@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestion du Personnel - Nathan Michel</title>
-    <link rel="icon" type="image/png" href="/public/favicon/Icon-iOS-Dark-1024x1024@1x.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon/Icon-iOS-Dark-1024x1024@1x.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon/Icon-iOS-Dark-1024x1024@1x.png">
+    <link rel="apple-touch-icon" href="/public/favicon/Icon-iOS-Dark-1024x1024@1x.png">
     <link rel="stylesheet" href="src/css/style.css">
     <link rel="preload" href="/public/fonts/ARIALROUNDEDMT.TTF" as="font" type="font/ttf" crossorigin>
     <style>
@@ -378,16 +380,16 @@
     <nav class="site-nav" role="navigation" aria-label="Navigation principale">
       <div class="nav-inner">
         <div class="nav-left">
-          <a class="site-title" href="index.html">Nathan Michel</a>
+        <a class="site-title" href="index.html" target="_self">Nathan Michel</a>
         </div>
         <div class="nav-right">
-          <a class="nav-link" href="index.html#formation-heading" title="Formation"><img src="public/icons/mortar-board-16.svg" alt="Formation icon" aria-hidden="true"></a>
-          <a class="nav-link" href="index.html#experience-heading" title="Expérience"><img src="public/icons/organization-16.svg" alt="Expérience icon" aria-hidden="true"></a>
-          <a class="nav-link" href="index.html#projects-heading" title="Projets"><img src="public/icons/repo-16.svg" alt="Projets icon" aria-hidden="true"></a>
-          <a class="nav-link" href="index.html#contrib-heading" title="Contributions"><img src="public/icons/git-commit-16.svg" alt="Contributions icon" aria-hidden="true"></a>
-          <a class="nav-link" href="index.html#tools-heading" title="Outils"><img src="public/icons/package-16.svg" alt="Outils icon" aria-hidden="true"></a>
-          <a class="nav-link" href="index.html#skills-heading" title="Compétences"><img src="public/icons/terminal-16.svg" alt="Compétences icon" aria-hidden="true"></a>
-          <a class="nav-cta" href="public/docs/nathan-cv.pdf" target="_blank" rel="noopener" title="Lire mon CV">Lire mon CV</a>
+              <a class="nav-link" href="index.html#formation-heading" title="Formation" target="_self"><img src="public/icons/mortar-board-16.svg" alt="Formation icon" aria-hidden="true"></a>
+              <a class="nav-link" href="index.html#experience-heading" title="Expérience" target="_self"><img src="public/icons/organization-16.svg" alt="Expérience icon" aria-hidden="true"></a>
+              <a class="nav-link" href="index.html#projects-heading" title="Projets" target="_self"><img src="public/icons/repo-16.svg" alt="Projets icon" aria-hidden="true"></a>
+              <a class="nav-link" href="index.html#contrib-heading" title="Contributions" target="_self"><img src="public/icons/git-commit-16.svg" alt="Contributions icon" aria-hidden="true"></a>
+              <a class="nav-link" href="index.html#tools-heading" title="Outils" target="_self"><img src="public/icons/package-16.svg" alt="Outils icon" aria-hidden="true"></a>
+              <a class="nav-link" href="index.html#skills-heading" title="Compétences" target="_self"><img src="public/icons/terminal-16.svg" alt="Compétences icon" aria-hidden="true"></a>
+             <a class="nav-cta" href="public/docs/nathan-cv.pdf" title="Lire mon CV">Lire mon CV</a>
         </div>
         <!-- Mobile kebab toggle -->
         <button id="mobileNavToggle" class="mobile-nav-toggle" aria-label="Ouvrir le menu" aria-expanded="false">
@@ -397,7 +399,7 @@
     </nav>
 
     <main class="showcase-hero">
-        <a href="index.html#projects-heading" class="back-link">
+        <a href="index.html#projects-heading" class="back-link" target="_self">
             <img src="public/icons/arrow-left-24.svg" alt="" style="width: 18px; filter: invert(1);" onerror="this.src='public/icons/icons8-flèche-30 gauche.png'; this.style.filter='invert(1)';">
             Retour aux projets
         </a>
@@ -477,28 +479,28 @@
         <div class="tech-container">
             <h3>Technologies utilisées</h3>
             <div class="tech-grid">
-                <div class="tech-item">
-                    <img src="public/images/java-original.svg" alt="Java">
+                <div class="tech-item tech-card">
+                    <img class="tech-logo" src="public/images/java-original.svg" alt="Java">
                     <span class="tech-name">Java</span>
                 </div>
-                <div class="tech-item">
-                    <img src="public/images/mysql-original-wordmark.svg" alt="MySQL">
+                <div class="tech-item tech-card">
+                    <img class="tech-logo" src="public/images/mysql-original-wordmark.svg" alt="MySQL">
                     <span class="tech-name">MySQL</span>
                 </div>
-                <div class="tech-item">
-                    <img src="public/images/git.svg" alt="Git">
+                <div class="tech-item tech-card">
+                    <img class="tech-logo" src="public/images/git.svg" alt="Git">
                     <span class="tech-name">Git</span>
                 </div>
-                <div class="tech-item">
-                    <img src="public/images/intellij-original.svg" alt="IntelliJ">
+                <div class="tech-item tech-card">
+                    <img class="tech-logo" src="public/images/intellij-original.svg" alt="IntelliJ">
                     <span class="tech-name">IntelliJ</span>
                 </div>
-                <div class="tech-item">
-                    <img src="public/icons/package-16.svg" alt="JDBC" style="filter: invert(1);">
+                <div class="tech-item tech-card">
+                    <img class="tech-logo" src="public/icons/package-16.svg" alt="JDBC" style="filter: invert(1);">
                     <span class="tech-name">JDBC</span>
                 </div>
-                <div class="tech-item">
-                    <img src="public/images/icons8-github-94.png" alt="GitHub">
+                <div class="tech-item tech-card">
+                    <img class="tech-logo" src="public/images/icons8-github-94.png" alt="GitHub">
                     <span class="tech-name">GitHub</span>
                 </div>
             </div>

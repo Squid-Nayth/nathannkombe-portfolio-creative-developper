@@ -3,6 +3,11 @@ document.addEventListener('DOMContentLoaded', function () {
   const canvas = document.getElementById('hero-network');
   if (!canvas) return; // nothing to do if hero canvas not present
   const ctx = canvas.getContext('2d');
+  const isCoarsePointer = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+  const particleScale = isCoarsePointer ? 0.82 : 1;
+  const maxConnectionDistance = isCoarsePointer ? 115 : 150;
+  let rafId = 0;
+  let resizeTimer = null;
 
   // Resize canvas to cover the parent (.hero)
   function setCanvasDimensions() {
@@ -10,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!parent) return;
     const rect = parent.getBoundingClientRect();
     // set device-pixel-ratio aware sizes
-    const dpr = Math.max(window.devicePixelRatio || 1, 1);
+    const dpr = Math.min(Math.max(window.devicePixelRatio || 1, 1), isCoarsePointer ? 1.5 : 2);
     // ensure the canvas is displayed as a block so sizing works predictably
     canvas.style.display = 'block';
     canvas.style.width = rect.width + 'px';
@@ -70,11 +75,11 @@ document.addEventListener('DOMContentLoaded', function () {
       particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        radius: isKey ? 4 : 3,
+        radius: (isKey ? 4 : 3) * particleScale,
         originalColor: color,
         highlightColor: { r: 217, g: 237, b: 146 },
-        velocityX: (Math.random() - 0.5) * 0.5,
-        velocityY: (Math.random() - 0.5) * 0.5,
+        velocityX: (Math.random() - 0.5) * (isCoarsePointer ? 0.35 : 0.5),
+        velocityY: (Math.random() - 0.5) * (isCoarsePointer ? 0.35 : 0.5),
         isKeyTopic: isKey,
         isActive: false,
         activeTime: 0,
@@ -90,19 +95,29 @@ document.addEventListener('DOMContentLoaded', function () {
   setCanvasDimensions();
   initParticles();
 
-  // keep in bounds and re-init on resize
-  let resizeTimer = null;
-  window.addEventListener('resize', () => {
+  function handleResize() {
     // debounce
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(() => {
       setCanvasDimensions();
       initParticles();
     }, 120);
-  });
+  }
+
+  window.addEventListener('resize', handleResize);
+  window.addEventListener('orientationchange', handleResize);
+  if (window.ResizeObserver && canvas.parentElement) {
+    const observer = new ResizeObserver(handleResize);
+    observer.observe(canvas.parentElement);
+  }
 
   let lastTime = performance.now();
   function animate(now) {
+    if (document.hidden) {
+      rafId = 0;
+      return;
+    }
+
     const deltaTime = now - lastTime;
     lastTime = now;
     const width = canvas._cssWidth || canvas.clientWidth || canvas.width;
@@ -120,9 +135,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const dx = p.x - q.x;
         const dy = p.y - q.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
-        const maxD = 150;
-        if (dist < maxD) {
-          let opacity = 0.08 * (1 - dist / maxD);
+        if (dist < maxConnectionDistance) {
+          let opacity = 0.08 * (1 - dist / maxConnectionDistance);
           if (p.isActive || q.isActive || p.isKeyTopic || q.isKeyTopic) opacity += 0.18;
           ctx.beginPath();
           ctx.moveTo(p.x, p.y);
@@ -169,7 +183,7 @@ document.addEventListener('DOMContentLoaded', function () {
       ctx.fill();
 
       if (p.isActive || p.isKeyTopic) {
-        const glow = p.radius * 2.5;
+        const glow = p.radius * (isCoarsePointer ? 2 : 2.5);
         const grad = ctx.createRadialGradient(p.x, p.y, p.radius, p.x, p.y, glow);
         grad.addColorStop(0, `rgba(${Math.round(finalColor.r)}, ${Math.round(finalColor.g)}, ${Math.round(finalColor.b)}, 0.9)`);
         grad.addColorStop(1, `rgba(${Math.round(finalColor.r)}, ${Math.round(finalColor.g)}, ${Math.round(finalColor.b)}, 0)`);
@@ -180,8 +194,26 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     });
 
-    requestAnimationFrame(animate);
+    rafId = requestAnimationFrame(animate);
   }
 
-  requestAnimationFrame(animate);
+  function startAnimation() {
+    if (rafId) return;
+    lastTime = performance.now();
+    rafId = requestAnimationFrame(animate);
+  }
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+        rafId = 0;
+      }
+      return;
+    }
+    handleResize();
+    startAnimation();
+  });
+
+  startAnimation();
 });

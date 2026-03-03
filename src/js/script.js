@@ -85,6 +85,7 @@ function _unlockAudioOnce() {
     if (p && typeof p.then === 'function') {
       p.then(() => {
         try { a.pause(); a.currentTime = 0; } catch (e) { }
+        try { _primeBackgroundMusic(); } catch (e) { /* ignore */ }
         __audioUnlocked = true;
         if (__faceidSoundQueued) { __faceidSoundQueued = false; _playFaceIdSound(); }
       }).catch((err) => {
@@ -92,6 +93,7 @@ function _unlockAudioOnce() {
       });
     } else {
       try { a.pause(); a.currentTime = 0; } catch (e) { }
+      try { _primeBackgroundMusic(); } catch (e) { /* ignore */ }
       __audioUnlocked = true;
       if (__faceidSoundQueued) { __faceidSoundQueued = false; _playFaceIdSound(); }
     }
@@ -102,6 +104,7 @@ function _unlockAudioOnce() {
 const __bgMusicSrc = encodeURI('public/sounds/Yi Nantiro - Blue Lantern (Royalty Free Music).mp3');
 let __bgAudio = null;
 let __bgMusicQueued = false;
+let __bgAudioPrimed = false;
 function _createBgAudio() {
   if (__bgAudio) return __bgAudio;
   try {
@@ -116,10 +119,52 @@ function _createBgAudio() {
   return __bgAudio;
 }
 
+function _primeBackgroundMusic() {
+  const bg = _createBgAudio();
+  if (!bg || __bgAudioPrimed) return;
+  try {
+    const prevMuted = bg.muted;
+    const prevVolume = bg.volume;
+    bg.muted = true;
+    bg.volume = 0;
+    const p = bg.play();
+    if (p && typeof p.then === 'function') {
+      p.then(() => {
+        try {
+          bg.pause();
+          bg.currentTime = 0;
+        } catch (e) { /* ignore */ }
+        bg.muted = prevMuted;
+        bg.volume = prevVolume;
+        __bgAudioPrimed = true;
+      }).catch((err) => {
+        bg.muted = prevMuted;
+        bg.volume = prevVolume;
+        console.warn('Background music priming failed:', err);
+      });
+      return;
+    }
+
+    try {
+      bg.pause();
+      bg.currentTime = 0;
+    } catch (e) { /* ignore */ }
+    bg.muted = prevMuted;
+    bg.volume = prevVolume;
+    __bgAudioPrimed = true;
+  } catch (e) {
+    console.warn('Unable to prime background music', e);
+  }
+}
+
 function _startBackgroundMusic() {
   const bg = _createBgAudio();
   if (!bg) return;
   if (__audioUnlocked) {
+    try {
+      bg.muted = false;
+      bg.volume = 0.28;
+    } catch (e) { /* ignore */ }
     const p = bg.play();
     if (p && typeof p.catch === 'function') {
       p.catch((err) => {
@@ -177,6 +222,17 @@ function _attachAudioUnlockListeners() {
   document.addEventListener('keydown', handler, { once: true });
 }
 _attachAudioUnlockListeners();
+
+function _stopBackgroundMusic() {
+  if (!__bgAudio) return;
+  try {
+    __bgAudio.pause();
+    __bgAudio.currentTime = 0;
+  } catch (e) { /* ignore */ }
+}
+
+window.addEventListener('pagehide', _stopBackgroundMusic);
+window.addEventListener('beforeunload', _stopBackgroundMusic);
 
 function runAfterFaceID(fn) {
   if (!document.documentElement.classList.contains('animations-paused')) fn();
@@ -1133,4 +1189,3 @@ document.addEventListener('DOMContentLoaded', function () {
   if (document.readyState === 'complete' || document.readyState === 'interactive') init();
   else document.addEventListener('DOMContentLoaded', init);
 })();
-

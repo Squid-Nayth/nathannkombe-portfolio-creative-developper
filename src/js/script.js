@@ -24,10 +24,95 @@ __toggleAudio.preload = 'auto';
 __toggleAudio.volume = 0.9;
 try { __toggleAudio.load(); } catch (e) { /* ignore */ }
 const __audioPreferenceKey = 'site.audio.muted';
+const __faceIdSessionKey = 'site.faceid.session.done';
+const __bgMusicStateKey = 'site.bgmusic.session.state';
+// Note: __faceIdPersistKey removed — loader shows on every page reload (sessionStorage only)
 let __siteAudioMuted = false;
+let __faceIdDoneDispatched = false;
+let __bgResumeState = null;
+let __shouldResumeMusic = true;
+let __resumeUnlockNeeded = false;
+// If we are coming from another page where music was already playing, mark
+// audio as unlocked so the browser lets us resume immediately without
+// requiring a new user gesture.
 try {
   __siteAudioMuted = localStorage.getItem(__audioPreferenceKey) === '1';
 } catch (e) { /* ignore */ }
+try {
+  const navEntry = performance.getEntriesByType('navigation')[0];
+  const navType = navEntry && navEntry.type ? navEntry.type : 'navigate';
+  if (navType === 'reload') {
+    // On reload: clear faceid session so the loader shows again
+    sessionStorage.removeItem(__faceIdSessionKey);
+    sessionStorage.removeItem(__bgMusicStateKey);
+    localStorage.removeItem(__bgMusicStateKey);
+  } else {
+    const storedBgState = sessionStorage.getItem(__bgMusicStateKey) || localStorage.getItem(__bgMusicStateKey);
+    __bgResumeState = storedBgState ? JSON.parse(storedBgState) : null;
+    if (__bgResumeState && __bgResumeState.shouldResume) {
+      __audioUnlocked = true;
+      __resumeUnlockNeeded = true;
+    }
+  }
+} catch (e) { /* ignore */ }
+__shouldResumeMusic = __bgResumeState ? !!__bgResumeState.shouldResume : true;
+
+function _hasFaceIdSession() {
+  // Only check sessionStorage: the loader shows again on every page reload
+  try {
+    return sessionStorage.getItem(__faceIdSessionKey) === '1';
+  } catch (e) { return false; }
+}
+
+function _persistFaceIdSession() {
+  // Persist only in sessionStorage so the loader reappears on reload
+  try { sessionStorage.setItem(__faceIdSessionKey, '1'); } catch (e) { /* ignore */ }
+}
+
+function _clearBgMusicResumeState() {
+  __bgResumeState = null;
+  try { sessionStorage.removeItem(__bgMusicStateKey); } catch (e) { /* ignore */ }
+  try { localStorage.removeItem(__bgMusicStateKey); } catch (e) { /* ignore */ }
+}
+
+function _storeBgMusicResumeState() {
+  if (__siteAudioMuted || !__bgAudio) {
+    _clearBgMusicResumeState();
+    return;
+  }
+
+  try {
+    const shouldResume = !__bgAudio.paused;
+    const nextState = {
+      currentTime: __bgAudio.currentTime || 0,
+      shouldResume
+    };
+    __bgResumeState = nextState;
+    __shouldResumeMusic = shouldResume;
+    const payload = JSON.stringify(nextState);
+    sessionStorage.setItem(__bgMusicStateKey, payload);
+    try { localStorage.setItem(__bgMusicStateKey, payload); } catch (e) { /* ignore */ }
+  } catch (e) { /* ignore */ }
+}
+
+function _dispatchFaceIdDone(options) {
+  const settings = options || {};
+  if (settings.persistSession) _persistFaceIdSession();
+  if (settings.overlay) {
+    settings.overlay.classList.add('hidden');
+    settings.overlay.classList.remove('fade-out');
+    settings.overlay.setAttribute('aria-hidden', 'true');
+  }
+  if (settings.faceId) {
+    settings.faceId.classList.remove('active');
+    settings.faceId.classList.remove('completed');
+  }
+  document.body.classList.remove('overlay-active');
+  document.documentElement.classList.remove('animations-paused');
+  if (__faceIdDoneDispatched) return;
+  __faceIdDoneDispatched = true;
+  document.dispatchEvent(new CustomEvent('faceid:done'));
+}
 
 function _syncMusicControlUI() {
   const control = document.getElementById('bgMusicControl');
@@ -58,6 +143,7 @@ function _setSiteAudioMuted(nextMuted) {
   __siteAudioMuted = Boolean(nextMuted);
   try { localStorage.setItem(__audioPreferenceKey, __siteAudioMuted ? '1' : '0'); } catch (e) { /* ignore */ }
   _applyGlobalAudioState();
+  if (__siteAudioMuted) _clearBgMusicResumeState();
   if (!__siteAudioMuted) {
     try { _flushQueuedAudio(); } catch (e) { /* ignore */ }
     if (!document.documentElement.classList.contains('animations-paused')) {
@@ -151,6 +237,7 @@ const __bgMusicSrc = encodeURI('public/sounds/Yi Nantiro - Blue Lantern (Royalty
 let __bgAudio = null;
 let __bgMusicQueued = false;
 let __bgAudioPrimed = false;
+if (__resumeUnlockNeeded) __bgAudioPrimed = true;
 function _createBgAudio() {
   if (__bgAudio) return __bgAudio;
   try {
@@ -211,14 +298,20 @@ function _startBackgroundMusic() {
   }
   const bg = _createBgAudio();
   if (!bg) return;
-  if (__audioUnlocked) {
+  const canAttemptPlayback = (__shouldResumeMusic === true) && (__audioUnlocked || (__bgResumeState && __bgResumeState.shouldResume));
+  if (canAttemptPlayback) {
     try {
       bg.muted = false;
       bg.volume = 0.28;
+      if (__bgResumeState && __bgResumeState.shouldResume) {
+        bg.currentTime = Math.max(0, Number(__bgResumeState.currentTime) || 0);
+      }
     } catch (e) { /* ignore */ }
     const p = bg.play();
-    if (p && typeof p.catch === 'function') {
-      p.catch((err) => {
+    if (p && typeof p.then === 'function') {
+      p.then(() => {
+        _clearBgMusicResumeState();
+      }).catch((err) => {
         console.warn('Background music play blocked:', err);
         __bgMusicQueued = true;
       });
@@ -229,7 +322,7 @@ function _startBackgroundMusic() {
 // When FaceID finishes, start background music after the face-id audio ends
 document.addEventListener('faceid:done', function () {
   try {
-    const startIfReady = function () { try { _startBackgroundMusic(); } catch (e) { } };
+    const startIfReady = function () { try { if (__shouldResumeMusic) _startBackgroundMusic(); } catch (e) { } };
     const last = window.__lastFaceIdAudio;
     if (last && typeof last.addEventListener === 'function') {
       if (last.ended) startIfReady();
@@ -278,6 +371,7 @@ _applyGlobalAudioState();
 function _stopBackgroundMusic() {
   if (!__bgAudio) return;
   try {
+    _storeBgMusicResumeState();
     __bgAudio.pause();
     if (!__siteAudioMuted) __bgAudio.currentTime = 0;
   } catch (e) { /* ignore */ }
@@ -285,6 +379,14 @@ function _stopBackgroundMusic() {
 
 window.addEventListener('pagehide', _stopBackgroundMusic);
 window.addEventListener('beforeunload', _stopBackgroundMusic);
+window.addEventListener('pageshow', () => {
+  try {
+    if (!__siteAudioMuted && __bgResumeState && __bgResumeState.shouldResume) {
+      __shouldResumeMusic = true;
+      _startBackgroundMusic();
+    }
+  } catch (e) { /* ignore resume errors */ }
+});
 
 document.addEventListener('DOMContentLoaded', () => {
   const control = document.getElementById('bgMusicControl');
@@ -295,6 +397,29 @@ document.addEventListener('DOMContentLoaded', () => {
     try { _unlockAudioOnce(); } catch (e) { /* ignore */ }
     _setSiteAudioMuted(!__siteAudioMuted);
   });
+});
+
+// On page load, if the previous page was playing music and user requested
+// navigation, resume immediately in the new page without waiting for extra
+// gestures.
+document.addEventListener('DOMContentLoaded', () => {
+  try {
+    if (!__siteAudioMuted && __bgResumeState && __bgResumeState.shouldResume) {
+      __shouldResumeMusic = true;
+      _startBackgroundMusic();
+    }
+  } catch (e) { /* ignore resume errors */ }
+});
+
+// Fallback: if FaceID a déjà été validé et aucune reprise n'est stockée,
+// démarre la musique immédiatement sur les nouvelles pages.
+document.addEventListener('DOMContentLoaded', () => {
+  try {
+    if (!__siteAudioMuted && _hasFaceIdSession()) {
+      __shouldResumeMusic = true;
+      _startBackgroundMusic();
+    }
+  } catch (e) { /* ignore */ }
 });
 
 function runAfterFaceID(fn) {
@@ -514,7 +639,16 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', () => {
   const overlay = document.querySelector('.faceid-overlay');
   const faceId = document.querySelector('.face-id-wrapper');
-  if (!overlay || !faceId) return;
+  if (!overlay || !faceId) {
+    if (_hasFaceIdSession()) _dispatchFaceIdDone();
+    else document.documentElement.classList.remove('animations-paused');
+    return;
+  }
+
+  if (_hasFaceIdSession()) {
+    _dispatchFaceIdDone({ overlay, faceId });
+    return;
+  }
 
   // show overlay and blur background until interaction completes
   overlay.classList.remove('hidden'); document.body.classList.add('overlay-active');
@@ -570,13 +704,8 @@ document.addEventListener('DOMContentLoaded', () => {
         overlay.classList.add('fade-out');
         const onFadeEnd = (ev) => {
           if (ev.propertyName === 'opacity') {
-            overlay.classList.add('hidden'); overlay.classList.remove('fade-out');
-            document.body.classList.remove('overlay-active'); overlay.removeEventListener('transitionend', onFadeEnd);
-            try {
-              faceId.classList.remove('active'); faceId.classList.remove('completed');
-              document.documentElement.classList.remove('animations-paused');
-              document.dispatchEvent(new CustomEvent('faceid:done'));
-            } catch (err) { }
+            overlay.removeEventListener('transitionend', onFadeEnd);
+            try { _dispatchFaceIdDone({ persistSession: true, overlay, faceId }); } catch (err) { }
           }
         };
         overlay.addEventListener('transitionend', onFadeEnd);
@@ -607,13 +736,13 @@ document.addEventListener('DOMContentLoaded', () => {
       faceId.classList.add('active'); try { _unlockAudioOnce(); } catch (e) { }
       desktopTimer = setTimeout(() => {
         faceId.classList.add('completed');
-        setTimeout(() => { try { if (__audioUnlocked) _playFaceIdSound(); else __faceidSoundQueued = true; } catch (err) { console.warn('Error playing FaceID sound', err); } }, dashDuration + 2);
+        setTimeout(() => { try { if (__audioUnlocked && !__siteAudioMuted) _playFaceIdSound(); else __faceidSoundQueued = true; } catch (err) { console.warn('Error playing FaceID sound', err); } }, dashDuration + 2);
         setTimeout(() => {
           overlay.classList.add('fade-out');
           const onFadeEnd = (e) => {
             if (e.propertyName === 'opacity') {
-              overlay.classList.add('hidden'); overlay.classList.remove('fade-out'); document.body.classList.remove('overlay-active'); overlay.removeEventListener('transitionend', onFadeEnd);
-              try { document.documentElement.classList.remove('animations-paused'); document.dispatchEvent(new CustomEvent('faceid:done')); } catch (err) { }
+              overlay.removeEventListener('transitionend', onFadeEnd);
+              try { _dispatchFaceIdDone({ persistSession: true, overlay, faceId }); } catch (err) { }
             }
           };
           overlay.addEventListener('transitionend', onFadeEnd);
@@ -769,37 +898,8 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-// Ensure external links open in a new tab; skip hashes, mailto:, tel:
-document.addEventListener('DOMContentLoaded', function () {
-  try {
-    const anchors = Array.from(document.querySelectorAll('a[href]'));
-    anchors.forEach(a => {
-      try {
-        const href = a.getAttribute('href');
-        if (!href) return;
-        const lower = href.toLowerCase();
-        if (lower.startsWith('#')) return; // same-document anchor
-        if (lower.startsWith('mailto:') || lower.startsWith('tel:')) return; // skip protocol links
-
-        // Resolve URL relative to current location
-        let url;
-        try { url = new URL(href, location.href); } catch (e) { return; }
-
-        // If it's the same origin and same pathname (only hash differs) -> treat as internal
-        if (url.origin === location.origin && url.pathname === location.pathname) return;
-
-        // Force open in new tab
-        a.setAttribute('target', '_blank');
-
-        // Ensure rel includes noopener and noreferrer for security
-        const rel = (a.getAttribute('rel') || '').split(/\s+/).filter(Boolean);
-        if (!rel.includes('noopener')) rel.push('noopener');
-        if (!rel.includes('noreferrer')) rel.push('noreferrer');
-        a.setAttribute('rel', rel.join(' '));
-      } catch (e) { /* ignore per-link errors */ }
-    });
-  } catch (e) { console.warn('error enforcing external links _blank', e); }
-});
+// Note: We intentionally avoid forcing links to open in new tabs so navigation
+// stays within a single browser tab across the site (mobile + desktop).
 
 (function () {
   const toggle = document.getElementById('emailToggle');
@@ -1198,6 +1298,30 @@ document.addEventListener('DOMContentLoaded', function () {
   if (document.readyState === 'complete' || document.readyState === 'interactive') initFloatingContact();
   else document.addEventListener('DOMContentLoaded', initFloatingContact);
 })();
+
+// Ensure all links stay in the same tab (remove any target set by widgets)
+document.addEventListener('DOMContentLoaded', function () {
+  function stripTargets(root) {
+    (root || document).querySelectorAll('a[target]').forEach(function (a) {
+      try { a.removeAttribute('target'); } catch (e) { /* ignore */ }
+      try { a.removeAttribute('rel'); } catch (e) { /* ignore */ }
+    });
+  }
+  stripTargets(document);
+  try {
+    const obs = new MutationObserver(function (mutations) {
+      mutations.forEach(function (m) {
+        m.addedNodes.forEach(function (n) {
+          if (n.nodeType !== 1) return;
+          if (n.tagName === 'A') stripTargets(n);
+          else stripTargets(n);
+        });
+      });
+    });
+    obs.observe(document.body, { childList: true, subtree: true });
+    setTimeout(function () { try { obs.disconnect(); } catch (e) { } }, 5000);
+  } catch (e) { /* ignore */ }
+});
 
 // Active nav link indicator based on visible section
 (function activeNavIndicator() {

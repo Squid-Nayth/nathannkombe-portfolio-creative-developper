@@ -180,7 +180,7 @@ section{scroll-margin-top:calc(var(--nav-height) + 8px)}
 }
 
 .bg-music-control.muted {
-  opacity: 0.5;
+    opacity: 0.5;
 }
 
 .bg-music-control svg {
@@ -201,8 +201,9 @@ section{scroll-margin-top:calc(var(--nav-height) + 8px)}
 }
 
 .bg-music-control:active svg {
-  transform: scale(0.9);
+    transform: scale(0.9);
 }
+
 
 body.overlay-active .bg-music-control {
   opacity: 0;
@@ -834,6 +835,18 @@ body.overlay-active footer{
 
 /* Slightly different filled style for primary project action if needed */
 .project-cta.primary{background:linear-gradient(90deg,#06b6d4,#7c3aed);color:#fff;border:none}
+
+/* Disabled state for project CTAs (e.g. "Infos" buttons temporarily hidden)
+   — remove class project-cta--disabled + aria-disabled + tabindex + onclick to re-enable */
+.project-cta--disabled,
+.project-cta[aria-disabled="true"]{
+  opacity:0.35;
+  pointer-events:none;
+  cursor:not-allowed;
+  filter:none;
+  transform:none !important;
+  box-shadow:none;
+}
 
 @media (max-width:880px){
   .projects-grid{grid-template-columns:1fr;}

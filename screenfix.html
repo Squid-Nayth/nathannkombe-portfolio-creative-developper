@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Screenfix - Nathan Michel</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon/Icon-iOS-Dark-1024x1024@1x.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon/Icon-iOS-Dark-1024x1024@1x.png">
+  <link rel="apple-touch-icon" href="/public/favicon/Icon-iOS-Dark-1024x1024@1x.png">
+  <link rel="stylesheet" href="src/css/style.css">
+  <link rel="stylesheet" href="src/css/project-detail.css">
+  <link rel="preload" href="/public/fonts/ARIALROUNDEDMT.TTF" as="font" type="font/ttf" crossorigin>
+</head>
+<body class="project-detail-page">
+  <nav class="site-nav" role="navigation" aria-label="Navigation principale">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a class="site-title" href="index.html">Nathan Michel</a>
+      </div>
+      <div class="nav-right">
+        <a class="nav-link" href="index.html#formation-heading" title="Formation"><img src="public/icons/mortar-board-16.svg" alt="" aria-hidden="true"></a>
+        <a class="nav-link" href="index.html#experience-heading" title="Expérience"><img src="public/icons/organization-16.svg" alt="" aria-hidden="true"></a>
+        <a class="nav-link" href="index.html#projects-heading" title="Projets"><img src="public/icons/repo-16.svg" alt="" aria-hidden="true"></a>
+        <a class="nav-link" href="index.html#contrib-heading" title="Contributions"><img src="public/icons/git-commit-16.svg" alt="" aria-hidden="true"></a>
+        <a class="nav-link" href="index.html#tools-heading" title="Outils"><img src="public/icons/package-16.svg" alt="" aria-hidden="true"></a>
+        <a class="nav-link" href="index.html#skills-heading" title="Compétences"><img src="public/icons/terminal-16.svg" alt="" aria-hidden="true"></a>
+        <a class="nav-cta" href="public/docs/nathan-cv.pdf">Lire mon CV</a>
+      </div>
+      <button id="mobileNavToggle" class="mobile-nav-toggle" aria-label="Ouvrir le menu" aria-expanded="false">
+        <img src="public/icons/kebab-horizontal-16.svg" alt="menu">
+      </button>
+    </div>
+  </nav>
+
+  <div class="mobile-nav-backdrop" id="mobileNavBackdrop" hidden></div>
+  <aside class="mobile-sidebar" id="mobileSidebar" aria-hidden="true">
+    <nav aria-label="Navigation mobile">
+      <ul>
+        <li><a href="index.html#formation-heading">Formation</a></li>
+        <li><a href="index.html#experience-heading">Expérience</a></li>
+        <li><a href="index.html#projects-heading">Projets</a></li>
+        <li><a href="index.html#contrib-heading">Contributions</a></li>
+        <li><a href="index.html#tools-heading">Outils</a></li>
+        <li><a href="index.html#skills-heading">Compétences</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <main class="showcase-hero">
+    <a href="index.html#projects-heading" class="back-link">
+      <img src="public/icons/icons8-flèche-30 gauche.png" alt="">
+      Retour aux projets
+    </a>
+
+    <div class="hero-mockup-container">
+      <img src="public/images/Capture d’écran 2025-11-13 à 07.23.44.png" class="mockup-main-img" alt="Aperçu du projet Screenfix">
+    </div>
+
+    <div class="hero-titles">
+      <h1>Screenfix</h1>
+      <h2>Site vitrine et prise de rendez-vous pour un service de réparation de smartphones.</h2>
+    </div>
+  </main>
+
+  <section class="content-layout">
+    <div class="summary-card">
+      <h3>Résumé du projet</h3>
+      <p>Screenfix est un site vitrine conçu pour présenter rapidement une offre de réparation de smartphones et simplifier la prise de contact. L’objectif principal était d’obtenir une interface claire, rapide à charger et facile à utiliser sur mobile.</p>
+      <p>J’ai travaillé sur l’intégration front-end, la hiérarchie de contenu, le parcours de prise de rendez-vous et la lisibilité des appels à l’action. Le projet devait rester simple à maintenir tout en donnant une image professionnelle et rassurante.</p>
+      <p>Ce projet m’a permis de consolider mon approche sur les sites de service local : structure claire, CTA visibles, responsive propre et attention particulière au confort d’usage mobile.</p>
+    </div>
+
+    <aside class="info-sidebar">
+      <div class="info-card">
+        <h4>Project Info</h4>
+        <ul class="info-list">
+          <li class="info-item">
+            <span class="info-label"><img src="public/icons/clock-16.svg" alt="">Type</span>
+            <span class="info-value">Site vitrine</span>
+          </li>
+          <li class="info-item">
+            <span class="info-label"><img src="public/icons/rss-16.svg" alt="">Statut</span>
+            <span class="info-value">En ligne</span>
+          </li>
+          <li class="info-item">
+            <span class="info-label"><img src="public/icons/package-16.svg" alt="">Stack</span>
+            <span class="info-value">HTML / Tailwind / JS</span>
+          </li>
+        </ul>
+        <div class="sidebar-actions">
+          <a href="https://screenfix.fr" class="visit-btn">
+            <img src="public/icons/rss-16.svg" alt="">
+            Voir le site
+          </a>
+          <a href="https://github.com/Squid-Nayth/Screenfix" class="doc-btn">
+            <img src="public/icons/mark-github-16.svg" alt="">
+            Voir le GitHub
+          </a>
+        </div>
+      </div>
+    </aside>
+  </section>
+
+  <section class="tech-section">
+    <div class="tech-container">
+      <h3>Technologies utilisées</h3>
+      <div class="tech-grid">
+        <div class="tech-item">
+          <img src="public/images/html5-original-wordmark.svg" alt="HTML">
+          <span class="tech-name">HTML</span>
+        </div>
+        <div class="tech-item">
+          <img src="public/images/tailwind.svg" alt="Tailwind CSS">
+          <span class="tech-name">Tailwind CSS</span>
+        </div>
+        <div class="tech-item">
+          <img src="public/images/JavaScript.svg" alt="JavaScript">
+          <span class="tech-name">JavaScript</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer contact-section">
+    <div class="contact-inner">
+      <div class="contact-top">
+        <div class="switch-box">
+          <label class="switch big-switch" title="Notifications">
+            <input type="checkbox" id="emailToggle" aria-checked="false">
+            <span class="slider" aria-hidden="true"></span>
+          </label>
+        </div>
+        <div class="contact-copy">
+          <h2 class="contact-title">Vous aimez mon travail ?</h2>
+          <p class="contact-desc">Activez les notifications pour être au courant des nouveautés apportées à mon portfolio.</p>
+        </div>
+      </div>
+      <div class="contact-bottom">
+        <div class="contact-line">
+          <span class="contact-name">Nathan Michel &copy; 2026</span>
+          <span class="contact-spacer">&nbsp;&mdash;&nbsp;</span>
+          <a class="contact-email" href="mailto:nathanmichel@eva-studio.dev">nathanmichel@eva-studio.dev</a>
+          <a class="contact-link" href="https://www.linkedin.com/in/nathan-michel-nkombe-lasseni-474ab930a/">LinkedIn</a>
+          <a class="contact-link" href="https://github.com/Squid-Nayth">GitHub</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <button id="bgMusicControl" class="bg-music-control" type="button" aria-label="Couper le son du site" aria-pressed="false" title="Couper le son du site">
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">
+      <path d="M11 5L6.5 9H4a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h2.5L11 19a1 1 0 0 0 1.67-.74V5.74A1 1 0 0 0 11 5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path class="bg-music-wave" d="M16 9.5a4 4 0 0 1 0 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      <path class="bg-music-wave" d="M18.5 7a7.5 7.5 0 0 1 0 10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      <path class="bg-music-mute" d="M5 5l14 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </button>
+
+  <script src="src/js/script.js" defer></script>
+</body>
+</html>

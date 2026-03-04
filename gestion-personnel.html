@@ -380,15 +380,15 @@
     <nav class="site-nav" role="navigation" aria-label="Navigation principale">
       <div class="nav-inner">
         <div class="nav-left">
-        <a class="site-title" href="index.html" target="_self">Nathan Michel</a>
+        <a class="site-title" href="index.html">Nathan Michel</a>
         </div>
         <div class="nav-right">
-              <a class="nav-link" href="index.html#formation-heading" title="Formation" target="_self"><img src="public/icons/mortar-board-16.svg" alt="Formation icon" aria-hidden="true"></a>
-              <a class="nav-link" href="index.html#experience-heading" title="Expérience" target="_self"><img src="public/icons/organization-16.svg" alt="Expérience icon" aria-hidden="true"></a>
-              <a class="nav-link" href="index.html#projects-heading" title="Projets" target="_self"><img src="public/icons/repo-16.svg" alt="Projets icon" aria-hidden="true"></a>
-              <a class="nav-link" href="index.html#contrib-heading" title="Contributions" target="_self"><img src="public/icons/git-commit-16.svg" alt="Contributions icon" aria-hidden="true"></a>
-              <a class="nav-link" href="index.html#tools-heading" title="Outils" target="_self"><img src="public/icons/package-16.svg" alt="Outils icon" aria-hidden="true"></a>
-              <a class="nav-link" href="index.html#skills-heading" title="Compétences" target="_self"><img src="public/icons/terminal-16.svg" alt="Compétences icon" aria-hidden="true"></a>
+              <a class="nav-link" href="index.html#formation-heading" title="Formation"><img src="public/icons/mortar-board-16.svg" alt="Formation icon" aria-hidden="true"></a>
+              <a class="nav-link" href="index.html#experience-heading" title="Expérience"><img src="public/icons/organization-16.svg" alt="Expérience icon" aria-hidden="true"></a>
+              <a class="nav-link" href="index.html#projects-heading" title="Projets"><img src="public/icons/repo-16.svg" alt="Projets icon" aria-hidden="true"></a>
+              <a class="nav-link" href="index.html#contrib-heading" title="Contributions"><img src="public/icons/git-commit-16.svg" alt="Contributions icon" aria-hidden="true"></a>
+              <a class="nav-link" href="index.html#tools-heading" title="Outils"><img src="public/icons/package-16.svg" alt="Outils icon" aria-hidden="true"></a>
+              <a class="nav-link" href="index.html#skills-heading" title="Compétences"><img src="public/icons/terminal-16.svg" alt="Compétences icon" aria-hidden="true"></a>
              <a class="nav-cta" href="public/docs/nathan-cv.pdf" title="Lire mon CV">Lire mon CV</a>
         </div>
         <!-- Mobile kebab toggle -->
@@ -398,8 +398,23 @@
       </div>
     </nav>
 
+    <div class="mobile-nav-backdrop" id="mobileNavBackdrop" hidden></div>
+    <aside class="mobile-sidebar" id="mobileSidebar" aria-hidden="true">
+      <nav aria-label="Navigation mobile">
+        <ul>
+          <li><a href="index.html#formation-heading">Formation</a></li>
+          <li><a href="index.html#experience-heading">Expérience</a></li>
+          <li><a href="index.html#projects-heading">Projets</a></li>
+          <li><a href="index.html#contrib-heading">Contributions</a></li>
+          <li><a href="index.html#tools-heading">Outils</a></li>
+          <li><a href="index.html#skills-heading">Compétences</a></li>
+          <li><a href="index.html#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </aside>
+
     <main class="showcase-hero">
-        <a href="index.html#projects-heading" class="back-link" target="_self">
+        <a href="index.html#projects-heading" class="back-link">
             <img src="public/icons/arrow-left-24.svg" alt="" style="width: 18px; filter: invert(1);" onerror="this.src='public/icons/icons8-flèche-30 gauche.png'; this.style.filter='invert(1)';">
             Retour aux projets
         </a>
@@ -462,11 +477,11 @@
                     </li>
                 </ul>
                 <div class="sidebar-actions">
-                    <a href="https://github.com/Squid-Nayth/Atelier-Pro" class="visit-btn" target="_blank">
+                    <a href="https://github.com/Squid-Nayth/Atelier-Pro" class="visit-btn">
                         <img src="public/icons/mark-github-16.svg" alt="">
                         Visiter le GitHub
                     </a>
-                    <a href="https://hackmd.io/@w2forYySRcKLyKtg6ZlW0A/Bk_Zz8QPWg" class="doc-btn" target="_blank">
+                    <a href="https://hackmd.io/@w2forYySRcKLyKtg6ZlW0A/Bk_Zz8QPWg" class="doc-btn">
                         <img src="public/icons/info-16.svg" alt="">
                         Documentation
                     </a>
@@ -532,12 +547,18 @@
         </div>
     </footer>
 
+    <button id="bgMusicControl" class="bg-music-control" type="button" aria-label="Couper le son du site" aria-pressed="false" title="Couper le son du site">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">
+        <path d="M11 5L6.5 9H4a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h2.5L11 19a1 1 0 0 0 1.67-.74V5.74A1 1 0 0 0 11 5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <path class="bg-music-wave" d="M16 9.5a4 4 0 0 1 0 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        <path class="bg-music-wave" d="M18.5 7a7.5 7.5 0 0 1 0 10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        <path class="bg-music-mute" d="M5 5l14 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+    </button>
+
     <script src="src/js/script.js" defer></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            document.documentElement.classList.remove('animations-paused');
-            document.dispatchEvent(new CustomEvent('faceid:done'));
-
             // Slider Logic
             const images = [
                 "public/images/163288-logo_java_pile_complete-java-langage_de_programmation-javascript-permanent-3840x2160.png",

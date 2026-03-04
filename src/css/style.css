@@ -840,7 +840,7 @@ body.overlay-active footer{
    — remove class project-cta--disabled + aria-disabled + tabindex + onclick to re-enable */
 .project-cta--disabled,
 .project-cta[aria-disabled="true"]{
-  opacity:0.35;
+  opacity:0;
   pointer-events:none;
   cursor:not-allowed;
   filter:none;

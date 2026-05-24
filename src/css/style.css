@@ -1664,3 +1664,105 @@ body.overlay-active .contact-cta.floating{opacity:0;pointer-events:none}
   opacity:0.95;
   transform:translate3d(-50%,-50%,0) scale(1.03);
 }
+
+/* Bonjour Loader CSS */
+.bonjour-loader {
+  position: fixed;
+  inset: 0;
+  background-color: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  z-index: 10000;
+  transition: opacity 0.5s ease;
+}
+
+.bonjour-loader.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.bonjour-loader-content {
+  width: 92%;
+  max-width: 550px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  transform: translateY(-32px);
+}
+
+.bonjour-svg {
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.2));
+}
+
+@media (min-width: 640px) {
+  .bonjour-loader-content {
+    width: 84%;
+  }
+  .bonjour-svg {
+    max-width: 450px;
+  }
+}
+
+.bonjour-svg path {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+}
+
+@keyframes drawLine {
+  0% { opacity: 0; }
+  1% { opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 1; }
+}
+
+.bonjour-loader-progress-wrapper {
+  width: 100%;
+  max-width: 560px;
+}
+
+.bonjour-loader-progress-text {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+  color: white;
+  font-size: 1.125rem;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (min-width: 640px) {
+  .bonjour-loader-progress-text {
+    font-size: 1.25rem;
+    margin-bottom: 12px;
+  }
+}
+
+.bonjour-loader-progress-bar-bg {
+  height: 4px;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+  border-radius: 9999px;
+}
+
+@media (min-width: 640px) {
+  .bonjour-loader-progress-bar-bg {
+    height: 5px;
+  }
+}
+
+.bonjour-loader-progress-bar-fill {
+  height: 100%;
+  background-color: white;
+  width: 0%;
+  transition: width 100ms ease-out;
+}

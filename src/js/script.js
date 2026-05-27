@@ -119,7 +119,10 @@ function _syncMusicControlUI() {
   if (!control) return;
   control.classList.toggle('muted', __siteAudioMuted);
   control.setAttribute('aria-pressed', String(__siteAudioMuted));
-  const label = __siteAudioMuted ? 'Réactiver le son du site' : 'Couper le son du site';
+  const isEn = getCurrentLanguage() === 'en';
+  const label = __siteAudioMuted 
+    ? (isEn ? 'Unmute site sound' : 'Réactiver le son du site')
+    : (isEn ? 'Mute site sound' : 'Couper le son du site');
   control.setAttribute('aria-label', label);
   control.setAttribute('title', label);
 }
@@ -1025,15 +1028,18 @@ document.addEventListener('DOMContentLoaded', function () {
     var firstLink = sidebar.querySelector('a'); if (firstLink) firstLink.focus();
   }
 
-  function closeNav() {
+  function closeNav(shouldRefocusToggle = true) {
     sidebar.classList.remove('open');
     sidebar.setAttribute('aria-hidden', 'true');
     backdrop.classList.remove('open');
     backdrop.hidden = true;
     toggle.setAttribute('aria-expanded', 'false');
     document.documentElement.style.overflow = '';
-    toggle.focus();
+    if (shouldRefocusToggle) toggle.focus();
   }
+
+  window.__closeMobileNav = closeNav;
+  window.__openMobileNav = openNav;
 
   toggle.addEventListener('click', function (e) {
     var open = sidebar.classList.contains('open');
@@ -1049,7 +1055,32 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // close when navigating a link
   sidebar.querySelectorAll('a').forEach(function (a) {
-    a.addEventListener('click', function () { closeNav(); });
+    a.addEventListener('click', function (ev) {
+      const href = a.getAttribute('href');
+      if (!href || href === '#' || !href.startsWith('#')) {
+        closeNav(false);
+        return;
+      }
+
+      const target = document.querySelector(href);
+      if (!target) {
+        closeNav(false);
+        return;
+      }
+
+      ev.preventDefault();
+      ev.stopPropagation();
+      closeNav(false);
+
+      requestAnimationFrame(() => {
+        const nav = document.querySelector('.site-nav');
+        const navHeight = nav ? nav.offsetHeight : 64;
+        const extraGap = 12;
+        const targetTop = window.scrollY + target.getBoundingClientRect().top;
+        const scrollTo = Math.max(0, targetTop - navHeight - extraGap);
+        window.scrollTo({ top: scrollTo, behavior: 'smooth' });
+      });
+    });
   });
 });
 
@@ -1175,13 +1206,15 @@ document.addEventListener('DOMContentLoaded', function () {
       try {
         const navRight = document.querySelector('.site-nav .nav-right');
         const navCta = document.querySelector('.site-nav .nav-cta');
+        const langToggle = document.querySelector('.site-nav .lang-toggle');
         const navCtaStyle = navCta ? getComputedStyle(navCta) : null;
         const navCtaRect = navCta ? navCta.getBoundingClientRect() : null;
         const shouldInsert = _clone && navRight && navCta && navCtaRect && navCtaRect.width > 6 && navCtaStyle && navCtaStyle.display !== 'none' && navCtaStyle.visibility !== 'hidden';
         if (shouldInsert) {
           // capture positions of existing nav children before DOM change
           const beforeMap = _rectsFor(Array.from(navRight.children));
-          if (navCta.parentNode === navRight) navRight.insertBefore(_clone, navCta.nextSibling);
+          if (langToggle && langToggle.parentNode === navRight) navRight.insertBefore(_clone, langToggle.nextSibling);
+          else if (navCta.parentNode === navRight) navRight.insertBefore(_clone, navCta.nextSibling);
           else navRight.appendChild(_clone);
           // after insertion: animate other items from their previous positions
           const afterNodes = Array.from(navRight.children);
@@ -1354,12 +1387,113 @@ document.addEventListener('DOMContentLoaded', function () {
   else document.addEventListener('DOMContentLoaded', init);
 })();
 
-// Bonjour Loader Logic
-document.addEventListener('DOMContentLoaded', () => {
-  const loader = document.getElementById('bonjour-loader');
-  if (!loader) return;
+// Reusable Loader & Translation functions
+let currentLoaderFrameId = 0;
 
-  const svg = document.getElementById('bonjour-svg');
+function getCurrentLanguage() {
+  try {
+    const saved = localStorage.getItem('preferred-lang');
+    if (saved) return saved;
+  } catch (e) {}
+  
+  const browserLang = navigator.language || navigator.userLanguage;
+  if (browserLang && browserLang.startsWith('en')) {
+    return 'en';
+  }
+  return 'fr';
+}
+
+function translatePage(lang) {
+  if (!window.translations || !window.translations[lang]) return;
+  const dict = window.translations[lang];
+
+  document.documentElement.setAttribute('lang', lang);
+
+  // Translate titles and meta descriptions
+  if (dict.meta_title) {
+    document.title = dict.meta_title;
+    const ogTitle = document.querySelector('meta[property="og:title"]');
+    if (ogTitle) ogTitle.setAttribute('content', dict.meta_title);
+    const twTitle = document.querySelector('meta[name="twitter:title"]');
+    if (twTitle) twTitle.setAttribute('content', dict.meta_title);
+  }
+  
+  if (dict.meta_desc) {
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) metaDesc.setAttribute('content', dict.meta_desc);
+    const ogDesc = document.querySelector('meta[property="og:description"]');
+    if (ogDesc) ogDesc.setAttribute('content', dict.meta_desc);
+    const twDesc = document.querySelector('meta[name="twitter:description"]');
+    if (twDesc) twDesc.setAttribute('content', dict.meta_desc);
+  }
+
+  // Translate elements with data-translate
+  document.querySelectorAll('[data-translate]').forEach(el => {
+    const key = el.getAttribute('data-translate');
+    if (dict[key]) {
+      if (key === 'hero_heading') {
+        el.innerHTML = dict[key];
+      } else {
+        el.textContent = dict[key];
+      }
+    }
+  });
+
+  // Translate placeholders
+  document.querySelectorAll('[data-translate-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-translate-placeholder');
+    if (dict[key]) {
+      el.placeholder = dict[key];
+    }
+  });
+
+  // Translate titles
+  document.querySelectorAll('[data-translate-title]').forEach(el => {
+    const key = el.getAttribute('data-translate-title');
+    if (dict[key]) {
+      el.setAttribute('title', dict[key]);
+    }
+  });
+
+  // Translate alt tags
+  document.querySelectorAll('[data-translate-alt]').forEach(el => {
+    const key = el.getAttribute('data-translate-alt');
+    if (dict[key]) {
+      el.setAttribute('alt', dict[key]);
+    }
+  });
+
+  // Translate aria-labels
+  document.querySelectorAll('[data-translate-aria-label]').forEach(el => {
+    const key = el.getAttribute('data-translate-aria-label');
+    if (dict[key]) {
+      el.setAttribute('aria-label', dict[key]);
+    }
+  });
+}
+
+function playLoader(targetLang, isSwitching, onComplete) {
+  const loader = document.getElementById('bonjour-loader');
+  if (!loader) {
+    if (onComplete) onComplete();
+    return;
+  }
+
+  if (currentLoaderFrameId) {
+    cancelAnimationFrame(currentLoaderFrameId);
+  }
+
+  const bonjourSvg = document.getElementById('bonjour-svg');
+  const helloSvg = document.getElementById('hello-svg');
+  if (targetLang === 'en') {
+    if (bonjourSvg) bonjourSvg.style.display = 'none';
+    if (helloSvg) helloSvg.style.display = 'block';
+  } else {
+    if (helloSvg) helloSvg.style.display = 'none';
+    if (bonjourSvg) bonjourSvg.style.display = 'block';
+  }
+
+  const svg = targetLang === 'en' ? helloSvg : bonjourSvg;
   if (svg) {
     const paths = svg.querySelectorAll('path');
     const totalDrawDuration = 4.8;
@@ -1385,15 +1519,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const progressValue = document.getElementById('bonjour-progress-value');
   const progressBar = document.getElementById('bonjour-progress-bar-fill');
+  if (progressValue) progressValue.innerText = '0';
+  if (progressBar) progressBar.style.width = '0%';
+
+  loader.style.display = 'flex';
+  loader.classList.remove('fade-out');
   
-  const totalDuration = 6000;
+  if (isSwitching) {
+    loader.classList.add('switching-mode');
+    document.body.classList.add('switching-lang-active');
+  } else {
+    loader.classList.remove('switching-mode');
+  }
+
+  const totalDuration = isSwitching ? 4000 : 6000;
   const startedAt = performance.now();
-  let frameId = 0;
 
   const pause1At = Math.floor(Math.random() * 26) + 20;
   const pause2At = Math.floor(Math.random() * 21) + 60;
-  const pause1Duration = Math.floor(Math.random() * 401) + 300;
-  const pause2Duration = Math.floor(Math.random() * 401) + 300;
+  const pause1Duration = isSwitching ? 200 : Math.floor(Math.random() * 401) + 300;
+  const pause2Duration = isSwitching ? 200 : Math.floor(Math.random() * 401) + 300;
   const movingDuration = totalDuration - pause1Duration - pause2Duration;
   const move1Duration = movingDuration * (pause1At / 100);
   const move2Duration = movingDuration * ((pause2At - pause1At) / 100);
@@ -1432,14 +1577,83 @@ document.addEventListener('DOMContentLoaded', () => {
     if (progressBar) progressBar.style.width = `${roundedProgress}%`;
 
     if (elapsed < totalDuration) {
-      frameId = requestAnimationFrame(updateProgress);
+      currentLoaderFrameId = requestAnimationFrame(updateProgress);
     } else {
       loader.classList.add('fade-out');
       setTimeout(() => {
         loader.style.display = 'none';
+        loader.classList.remove('switching-mode');
+        document.body.classList.remove('switching-lang-active');
+        if (onComplete) onComplete();
       }, 500);
     }
   };
 
-  frameId = requestAnimationFrame(updateProgress);
+  currentLoaderFrameId = requestAnimationFrame(updateProgress);
+}
+
+// Initial load handler
+document.addEventListener('DOMContentLoaded', () => {
+  const initialLang = getCurrentLanguage();
+  
+  // Translate immediately if non-French
+  if (initialLang !== 'fr') {
+    translatePage(initialLang);
+  }
+
+  // Play initial loader
+  playLoader(initialLang, false);
+
+  const langToggles = Array.from(document.querySelectorAll('.lang-toggle'));
+
+  function syncLangToggleUI(activeLang) {
+    langToggles.forEach(toggleEl => {
+      const buttons = Array.from(toggleEl.querySelectorAll('.lang-toggle-btn'));
+      toggleEl.classList.toggle('en-active', activeLang === 'en');
+      buttons.forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-lang') === activeLang);
+      });
+    });
+  }
+
+  syncLangToggleUI(initialLang);
+
+  langToggles.forEach(toggleEl => {
+    const buttons = Array.from(toggleEl.querySelectorAll('.lang-toggle-btn'));
+
+    buttons.forEach(button => {
+      button.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const targetLang = button.getAttribute('data-lang');
+        const activeLang = getCurrentLanguage();
+        if (targetLang === activeLang) return;
+
+        playLoader(targetLang, true, () => {
+          translatePage(targetLang);
+          try {
+            localStorage.setItem('preferred-lang', targetLang);
+          } catch (err) {}
+          _syncMusicControlUI();
+
+          try {
+            initHeroPopper();
+          } catch (err) {
+            console.warn(err);
+          }
+
+          syncLangToggleUI(targetLang);
+          if (typeof window.__closeMobileNav === 'function') {
+            window.__closeMobileNav(false);
+          }
+        });
+
+        syncLangToggleUI(targetLang);
+      });
+    });
+
+    toggleEl.addEventListener('click', () => {
+      const targetBtn = toggleEl.querySelector('.lang-toggle-btn:not(.active)');
+      if (targetBtn) targetBtn.click();
+    });
+  });
 });

@@ -1793,10 +1793,11 @@ body.overlay-active .contact-cta.floating{opacity:0;pointer-events:none}
   height: 38px;
   user-select: none;
   cursor: pointer;
-  overflow: hidden;
+  overflow: visible;
   align-items: center;
   box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
   transition: transform .18s ease, filter .18s ease, box-shadow .18s ease;
+  z-index: 1;
 }
 
 .lang-toggle:hover {
@@ -1807,6 +1808,29 @@ body.overlay-active .contact-cta.floating{opacity:0;pointer-events:none}
 
 .lang-toggle:active {
   transform: translateY(-1px) scale(1.005);
+}
+
+.lang-toggle::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%) scale(.98);
+  width: calc(100% + 12px);
+  height: calc(100% + 10px);
+  background: radial-gradient(circle at center, rgba(0,122,255,0.22) 0%, rgba(0,122,255,0.08) 40%, rgba(0,122,255,0.02) 70%);
+  filter: blur(10px) saturate(1.08);
+  border-radius: 999px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .18s ease, transform .18s ease;
+  z-index: -1;
+}
+
+.lang-toggle:hover::before,
+.lang-toggle:focus-within::before {
+  opacity: 0.95;
+  transform: translate(-50%,-50%) scale(1.03);
 }
 
 .lang-toggle-bg {
